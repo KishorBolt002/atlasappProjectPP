@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+  --color-paper: #f6f8ff;
+  --color-sheet: #ffffff;
+  --color-ink: #151a33;
+  --color-ink-soft: #545b7a;
+  --color-line: #dfe4f5;
+  --color-cobalt: #2b59ff;
+  --color-cobalt-deep: #1d3fd6;
+  --color-cobalt-wash: #e8eeff;
+  --color-magenta: #f0287a;
+  --color-magenta-wash: #ffe6f0;
+  --color-caution: #ffd52e;
+}
+
+@layer base {
+html {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+}
+
+@layer components {
+.caution-tape {
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--color-caution) 0 18px,
+    #ffe36b 18px 36px
+  );
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

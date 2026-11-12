@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "concepts": [
+    {
+      "id": "note",
+      "name": "Note",
+      "kind": "object",
+      "description": "A short throwaway test note with a title (1-200 characters) and body text (1-2000 characters), both trimmed and required. Any signed-in user can create, list (newest first by creation time), edit, and delete any note; there is no per-user ownership. Created and last-updated timestamps are recorded by the database. Not for real business, patient, or customer data.",
+      "bindings": [
+        {"kind": "table", "target": "notes", "role": "source", "description": "Stores every note; id is database-generated."},
+        {"kind": "schema", "target": "NoteResponse", "description": "Note as returned by the API."},
+        {"kind": "schema", "target": "NoteCreate", "description": "Fields required to add a note."},
+        {"kind": "schema", "target": "NoteUpdate", "description": "Fields required to edit a note; replaces title and body."},
+        {"kind": "operation", "target": "list_notes_api_notes__get", "description": "List all notes newest first."},
+        {"kind": "operation", "target": "create_note_api_notes__post", "description": "Add a note."},
+        {"kind": "operation", "target": "get_note_api_notes__note_id__get", "description": "Read one note."},
+        {"kind": "operation", "target": "update_note_api_notes__note_id__put", "description": "Edit a note's title and body; refreshes its updated time."},
+        {"kind": "operation", "target": "delete_note_api_notes__note_id__delete", "description": "Permanently delete a note."}
+      ]
+    }
+  ]
+}

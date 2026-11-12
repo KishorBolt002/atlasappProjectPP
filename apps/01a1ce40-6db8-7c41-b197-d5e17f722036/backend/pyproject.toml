@@ -1,0 +1,69 @@
+[project]
+name = "backend-app"
+version = "1.0.0"
+description = "FastAPI application"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi==0.162.0",
+    "uvicorn[standard]==0.54.0",
+    "pydantic==2.14.2",
+    "sqlalchemy==2.1.6",
+    "alembic==1.20.1",
+    "pandas==3.1.0",
+    "openpyxl==3.1.5",
+    "pyyaml==6.0.3",
+    "python-multipart==0.0.32",
+    "cloud-sql-python-connector[pg8000]==1.23.0",
+    "databricks-sdk==0.158.0",
+    "databricks-sql-connector==4.8.0",
+    "pg8000==1.31.6",
+    "pgvector==0.5.1",
+    "psycopg[binary]==3.3.6",
+    "snowflake-connector-python==4.8.1",
+    "snowflake-sqlalchemy==1.11.1",
+    "simple-salesforce==1.12.10",
+    "hubspot-api-client==12.0.0",
+    "mcp==1.30.0",
+    "google-genai==2.34.0",
+    "anthropic==2.3.0",
+    "openai==3.41.0",
+    "httpx==0.28.1",
+    "requests==2.34.2",
+    "aiohttp==3.14.5",
+    "boto3==1.43.122",
+    "azure-ai-inference==1.0.0b9",
+    "azure-identity==1.27.0",
+    "azure-storage-blob==12.31.1",
+    "google-cloud-storage==3.17.1",
+    "jsonschema==4.26.0",
+]
+
+[tool.ruff]
+exclude = [
+    "alembic/versions/",
+    "alembic/versions/*.py",
+    ".venv/",
+    "src/clients/connectors/",
+    "src/clients/apps/",
+]
+target-version = "py313"
+
+[tool.ruff.lint]
+extend-select = ["ASYNC"]
+ignore = ["ASYNC230", "ASYNC240"]
+
+[tool.ruff.lint.per-file-ignores]
+# env.py must insert the app directory into sys.path before it can import
+# src.app_config, so its late import is structural, not stylistic. E402 left
+# ruff's default rules in 0.16; this keeps the file clean for toolchains that
+# still enable it.
+"alembic/env.py" = ["E402"]
+
+[tool.ty.environment]
+python-version = "3.13"
+
+[tool.ty.src]
+exclude = ["alembic/versions/**", ".venv/**", "src/clients/connectors/**", "src/clients/apps/**"]
+
+[tool.init]
+version = "fcc0a591"
