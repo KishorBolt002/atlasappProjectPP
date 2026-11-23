@@ -1,0 +1,39 @@
+{
+  "name": "frontend-app",
+  "version": "1.0.0",
+  "initVersion": "a4e80876",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "generate-types": "bun transform-openapi-types.ts ./src/api/schema.d.ts"
+  },
+  "dependencies": {
+    "@fontsource-variable/figtree": "^5.3.0",
+    "@headlessui/react": "^2.2.10",
+    "clsx": "^2.1.1",
+    "framer-motion": "^14.12.0",
+    "lucide-react": "^1.70.0",
+    "openapi-fetch": "^0.17.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-markdown": "^10.1.0",
+    "react-router": "^8.5.1",
+    "remark-gfm": "^4.0.1",
+    "sonner": "^2.0.8"
+  },
+  "overrides": {
+    "js-yaml": "^4.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "@tailwindcss/vite": "^4.3.5",
+    "tailwindcss": "^4.3.5",
+    "openapi-typescript": "^7.13.0",
+    "typescript": "^6.0.3",
+    "vite": "npm:rolldown-vite@7.3.1"
+  }
+}

@@ -1,0 +1,168 @@
+test_suites:
+- name: notes_crud
+  ordered: true
+  tests:
+  - name: Health check
+    endpoint: /api/health
+    method: GET
+    expect_status: 200
+  - name: Create first note
+    endpoint: /api/notes/
+    method: POST
+    requirements:
+    - R1
+    expect_status: 201
+    body:
+      title: '  First note  '
+      body: First body
+    capture:
+      first_id: $.id
+      first_title: $.title
+      first_body: $.body
+      first_created_at: $.created_at
+      first_updated_at: $.updated_at
+  - name: Create second note
+    endpoint: /api/notes/
+    method: POST
+    requirements:
+    - R1
+    expect_status: 201
+    body:
+      title: Second note
+      body: Second body
+    capture:
+      second_id: $.id
+      second_created_at: $.created_at
+  - name: List notes newest first
+    endpoint: /api/notes/
+    method: GET
+    requirements:
+    - R1
+    expect_status: 200
+    capture:
+      list_top_id: $[0].id
+      list_second_id: $[1].id
+  - name: Get first note
+    endpoint: /api/notes/${first_id}
+    method: GET
+    requirements:
+    - R1
+    expect_status: 200
+    capture:
+      got_title: $.title
+      got_created_at: $.created_at
+  - name: Update first note
+    endpoint: /api/notes/${first_id}
+    method: PUT
+    requirements:
+    - R2
+    expect_status: 200
+    body:
+      title: First note edited
+      body: Edited body
+    capture:
+      edited_title: $.title
+      edited_body: $.body
+      edited_updated_at: $.updated_at
+  - name: Get updated note persists edit
+    endpoint: /api/notes/${first_id}
+    method: GET
+    requirements:
+    - R2
+    expect_status: 200
+    capture:
+      persisted_title: $.title
+  - name: Update rejects blank title
+    endpoint: /api/notes/${first_id}
+    method: PUT
+    requirements:
+    - R2
+    expect_status: 422
+    body:
+      title: '   '
+      body: Still valid
+  - name: Update unknown note returns 404
+    endpoint: /api/notes/999999
+    method: PUT
+    requirements:
+    - R2
+    expect_status: 404
+    body:
+      title: Nope
+      body: Nope
+  - name: Create rejects blank title
+    endpoint: /api/notes/
+    method: POST
+    requirements:
+    - R1
+    expect_status: 422
+    body:
+      title: '   '
+      body: Some body
+  - name: Create rejects blank body
+    endpoint: /api/notes/
+    method: POST
+    requirements:
+    - R1
+    expect_status: 422
+    body:
+      title: Title
+      body: '  '
+  - name: Create rejects overlong title
+    endpoint: /api/notes/
+    method: POST
+    requirements:
+    - R1
+    expect_status: 422
+    body:
+      title: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+      body: Some body
+  - name: Create rejects overlong body
+    endpoint: /api/notes/
+    method: POST
+    requirements:
+    - R1
+    expect_status: 422
+    body:
+      title: Title
+      body: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  - name: Get unknown note returns 404
+    endpoint: /api/notes/999999
+    method: GET
+    requirements:
+    - R1
+    expect_status: 404
+  - name: Missing identity is rejected
+    endpoint: /api/notes/
+    method: GET
+    requirements:
+    - R1
+    headers:
+      Atlas-User-Email: ''
+    expect_status: 401
+  - name: Delete second note
+    endpoint: /api/notes/${second_id}
+    method: DELETE
+    requirements:
+    - R3
+    expect_status: 204
+  - name: Deleted note is gone
+    endpoint: /api/notes/${second_id}
+    method: GET
+    requirements:
+    - R3
+    expect_status: 404
+  - name: List after delete has one note
+    endpoint: /api/notes/
+    method: GET
+    requirements:
+    - R3
+    expect_status: 200
+    capture:
+      remaining_id: $[0].id
+  - name: Delete unknown note returns 404
+    endpoint: /api/notes/${second_id}
+    method: DELETE
+    requirements:
+    - R3
+    expect_status: 404
