@@ -1,0 +1,402 @@
+# Catalog suites read live Salesforce data through the sync (read-only).
+# Description PUT tests cover ONLY denial paths that fail before any write.
+test_suites:
+- name: catalog_sync
+  ordered: true
+  tests:
+  - name: Sync status before first sync
+    endpoint: /api/catalog/sync-status
+    method: GET
+    requirements: [R5]
+    expect_status: 200
+    capture:
+      before_has_synced: $.has_synced
+  - name: Viewer cannot start a sync
+    endpoint: /api/sync/catalog/start-full
+    method: POST
+    requirements: [R5, R10]
+    headers:
+      Atlas-User-Email: reader@example.com
+    expect_status: 403
+  - name: Start full refresh
+    endpoint: /api/sync/catalog/start-full
+    method: POST
+    requirements: [R5]
+    expect_status: 202
+    capture:
+      job_id: $.id
+  - name: Start again returns the active job
+    endpoint: /api/sync/catalog/start
+    method: POST
+    requirements: [R5]
+    expect_status: 202
+    capture:
+      same_job_id: $.id
+  - name: Tick 1
+    endpoint: /api/sync/catalog/${job_id}/tick
+    method: POST
+    requirements: [R5]
+    expect_status: 200
+    timeout: 60
+  - name: Tick 2
+    endpoint: /api/sync/catalog/${job_id}/tick
+    method: POST
+    requirements: [R5]
+    expect_status: 200
+    timeout: 60
+  - name: Tick 3
+    endpoint: /api/sync/catalog/${job_id}/tick
+    method: POST
+    requirements: [R5]
+    expect_status: 200
+    timeout: 60
+  - name: Tick 4
+    endpoint: /api/sync/catalog/${job_id}/tick
+    method: POST
+    requirements: [R5]
+    expect_status: 200
+    timeout: 60
+  - name: Tick 5
+    endpoint: /api/sync/catalog/${job_id}/tick
+    method: POST
+    requirements: [R5]
+    expect_status: 200
+    timeout: 60
+    capture:
+      final_status: $.status
+      final_finished: $.finished
+      final_records: $.records_synced
+  - name: Sync status after sync
+    endpoint: /api/catalog/sync-status
+    method: GET
+    requirements: [R5]
+    expect_status: 200
+    capture:
+      has_synced: $.has_synced
+      last_synced_at: $.last_synced_at
+      last_mode: $.last_job_mode
+
+- name: catalog_incremental_sync
+  depends_on: [catalog_sync]
+  ordered: true
+  tests:
+  - name: Start incremental sync
+    endpoint: /api/sync/catalog/start
+    method: POST
+    requirements: [R5]
+    expect_status: 202
+    capture:
+      inc_job_id: $.id
+  - name: Incremental tick 1
+    endpoint: /api/sync/catalog/${inc_job_id}/tick
+    method: POST
+    requirements: [R5]
+    expect_status: 200
+    timeout: 60
+  - name: Incremental tick 2
+    endpoint: /api/sync/catalog/${inc_job_id}/tick
+    method: POST
+    requirements: [R5]
+    expect_status: 200
+    timeout: 60
+  - name: Incremental tick 3
+    endpoint: /api/sync/catalog/${inc_job_id}/tick
+    method: POST
+    requirements: [R5]
+    expect_status: 200
+    timeout: 60
+    capture:
+      inc_status: $.status
+  - name: Tick for unknown job is 404
+    endpoint: /api/sync/catalog/00000000-0000-0000-0000-000000000000/tick
+    method: POST
+    requirements: [R5]
+    expect_status: 404
+
+- name: catalog_browse
+  depends_on: [catalog_sync]
+  tests:
+  - name: Overview with coverage and catalogs
+    endpoint: /api/catalog/overview
+    method: GET
+    requirements: [R5, R6]
+    expect_status: 200
+    capture:
+      total_products: $.totals.products
+      total_catalogs: $.totals.catalogs
+      first_catalog_id: $.catalogs[0].sf_id
+      first_catalog_name: $.catalogs[0].name
+      first_category_id: $.catalogs[0].categories[0].sf_id
+      first_coverage_status: $.coverage[0].status
+      first_section_available: $.sections[0].available
+      instance_url: $.salesforce_instance_url
+  - name: Viewer denied overview
+    endpoint: /api/catalog/overview
+    method: GET
+    requirements: [R10]
+    headers:
+      Atlas-User-Email: reader@example.com
+    expect_status: 403
+  - name: Products first page
+    endpoint: /api/catalog/products/
+    method: GET
+    requirements: [R6]
+    expect_status: 200
+    params:
+      query:
+        page: 1
+        page_size: 10
+    capture:
+      page_total: $.total
+      page_pages: $.total_pages
+      page_first_id: $.items[0].sf_id
+      page_first_name: $.items[0].name
+  - name: Products second page
+    endpoint: /api/catalog/products/
+    method: GET
+    requirements: [R6]
+    expect_status: 200
+    params:
+      query:
+        page: 2
+        page_size: 10
+    capture:
+      page2_first_id: $.items[0].sf_id
+  - name: Search products by name
+    endpoint: /api/catalog/products/
+    method: GET
+    requirements: [R6]
+    expect_status: 200
+    params:
+      query:
+        q: bundle
+    capture:
+      search_first: $.items[0].name
+      search_total: $.total
+  - name: Filter bundles only
+    endpoint: /api/catalog/products/
+    method: GET
+    requirements: [R6]
+    expect_status: 200
+    params:
+      query:
+        product_type: bundle
+        is_active: true
+    capture:
+      bundle_total: $.total
+      bundle_type: $.items[0].type
+  - name: Filter by catalog and category (Hardware Catalog / Laptops)
+    endpoint: /api/catalog/products/
+    method: GET
+    requirements: [R6]
+    expect_status: 200
+    params:
+      query:
+        catalog_id: 0ZSaj000000iSyIGAU
+        category_id: 0ZGaj000001RJkMGAW
+    capture:
+      laptops_total: $.total
+      laptops_category: $.items[0].category_names[0]
+  - name: Page size above limit rejected
+    endpoint: /api/catalog/products/
+    method: GET
+    requirements: [R6]
+    expect_status: 422
+    params:
+      query:
+        page_size: 500
+  - name: Malformed category id rejected
+    endpoint: /api/catalog/products/
+    method: GET
+    requirements: [R6]
+    expect_status: 422
+    params:
+      query:
+        category_id: not-an-id
+
+- name: catalog_product_detail
+  depends_on: [catalog_sync]
+  tests:
+  - name: Bundle product detail
+    endpoint: /api/catalog/products/01taj00000YtW0VAAV
+    method: GET
+    requirements: [R7]
+    expect_status: 200
+    capture:
+      bundle_name: $.name
+      bundle_group: $.bundle.groups[0].name
+      bundle_child: $.bundle.groups[0].components[0].child_product.name
+      bundle_price: $.price_entries[0].unit_price
+      bundle_price_book: $.price_entries[0].price_book.name
+      bundle_catalog: $.memberships[0].catalog.name
+      bundle_selling_model: $.selling_models[0].selling_model.name
+      bundle_sf_url: $.salesforce_url
+  - name: Product with attributes and classification
+    endpoint: /api/catalog/products/01taj00000YtW0mAAF
+    method: GET
+    requirements: [R7]
+    expect_status: 200
+    capture:
+      attr_product_class: $.classification.name
+      attr_name: $.attributes[0].name
+      attr_type: $.attributes[0].data_type
+      attr_value: $.attributes[0].picklist_values[0].label
+  - name: Unknown product 404
+    endpoint: /api/catalog/products/01t000000000000AAA
+    method: GET
+    requirements: [R7]
+    expect_status: 404
+  - name: Non-product id rejected
+    endpoint: /api/catalog/products/0ZSaj000000iSyIGAU
+    method: GET
+    requirements: [R7]
+    expect_status: 422
+  - name: Viewer denied product detail
+    endpoint: /api/catalog/products/01taj00000YtW0VAAV
+    method: GET
+    requirements: [R10]
+    headers:
+      Atlas-User-Email: reader@example.com
+    expect_status: 403
+
+- name: catalog_attribute_library
+  depends_on: [catalog_sync]
+  tests:
+  - name: Attribute library
+    endpoint: /api/catalog/attributes
+    method: GET
+    requirements: [R8]
+    expect_status: 200
+    capture:
+      def_name: $.definitions[0].name
+      def_type: $.definitions[0].data_type
+      cat_name: $.categories[0].name
+      picklist_name: $.picklists[0].name
+      class_name: $.classifications[0].name
+      section_ok: $.sections[0].available
+  - name: Viewer denied attribute library
+    endpoint: /api/catalog/attributes
+    method: GET
+    requirements: [R10]
+    headers:
+      Atlas-User-Email: reader@example.com
+    expect_status: 403
+
+- name: catalog_description_flow
+  depends_on: [catalog_sync]
+  ordered: true
+  tests:
+  - name: Lookup product for assistant
+    endpoint: /api/catalog/lookup/products/
+    method: GET
+    requirements: [R11]
+    expect_status: 200
+    params:
+      query:
+        q: antivirus
+        limit: 5
+    capture:
+      lookup_id: $.items[0].sf_id
+      lookup_name: $.items[0].name
+      lookup_catalog: $.items[0].catalog_names[0]
+      lookup_total: $.total_matches
+  - name: Lookup requires a query
+    endpoint: /api/catalog/lookup/products/
+    method: GET
+    requirements: [R11]
+    expect_status: 422
+  - name: Live description read
+    endpoint: /api/catalog/products/${lookup_id}/description
+    method: GET
+    requirements: [R9, R11]
+    expect_status: 200
+    capture:
+      live_desc: $.current_description
+      live_modified: $.last_modified
+      live_field: $.field.field_api_name
+      live_updateable: $.field.updateable
+      live_max: $.field.max_length
+  - name: Preview proposed description (no write)
+    endpoint: /api/catalog/products/${lookup_id}/description/preview
+    method: POST
+    requirements: [R9, R11]
+    expect_status: 200
+    body:
+      proposed_description: Proposed antivirus description for preview only
+    capture:
+      preview_changed: $.changed
+      preview_can_apply: $.can_apply
+      preview_current: $.current_description
+      preview_modified: $.last_modified
+  - name: Viewer cannot preview
+    endpoint: /api/catalog/products/${lookup_id}/description/preview
+    method: POST
+    requirements: [R9, R10]
+    headers:
+      Atlas-User-Email: reader@example.com
+    expect_status: 403
+    body:
+      proposed_description: x
+  - name: Viewer cannot update description
+    endpoint: /api/catalog/products/${lookup_id}/description
+    method: PUT
+    requirements: [R9, R10]
+    headers:
+      Atlas-User-Email: reader@example.com
+    expect_status: 403
+    body:
+      proposed_description: Should never be written
+      expected_last_modified: '2020-01-01T00:00:00Z'
+      confirm: true
+  - name: Update without confirmation rejected
+    endpoint: /api/catalog/products/${lookup_id}/description
+    method: PUT
+    requirements: [R9]
+    expect_status: 422
+    body:
+      proposed_description: Should never be written
+      expected_last_modified: '2020-01-01T00:00:00Z'
+      confirm: false
+  - name: Update with malformed id rejected
+    endpoint: /api/catalog/products/01tSHORT/description
+    method: PUT
+    requirements: [R9]
+    expect_status: 422
+    body:
+      proposed_description: Should never be written
+      expected_last_modified: '2020-01-01T00:00:00Z'
+      confirm: true
+  - name: Update for unknown product 404
+    endpoint: /api/catalog/products/01t000000000000AAA/description
+    method: PUT
+    requirements: [R9]
+    expect_status: 404
+    body:
+      proposed_description: Should never be written
+      expected_last_modified: '2020-01-01T00:00:00Z'
+      confirm: true
+  - name: Stale update conflicts and writes nothing
+    endpoint: /api/catalog/products/${lookup_id}/description
+    method: PUT
+    requirements: [R9, R11]
+    expect_status: 409
+    body:
+      proposed_description: Should never be written
+      expected_last_modified: '2020-01-01T00:00:00Z'
+      confirm: true
+  - name: Salesforce value unchanged after conflict
+    endpoint: /api/catalog/products/${lookup_id}/description
+    method: GET
+    requirements: [R9]
+    expect_status: 200
+    capture:
+      after_modified: $.last_modified
+      after_desc: $.current_description
+  - name: Conflict recorded in history
+    endpoint: /api/catalog/products/${lookup_id}/description/history
+    method: GET
+    requirements: [R9]
+    expect_status: 200
+    capture:
+      history_outcome: $[0].outcome
+      history_by: $[0].requested_by

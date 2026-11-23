@@ -1,164 +1,98 @@
-import { useCallback, useEffect, useState } from 'react'
-import { Toaster, toast } from 'sonner'
-import { AlertTriangle, FileText, Loader2, RefreshCw } from 'lucide-react'
-import client from '@/api/client'
-import { NoteComposer } from '@/components/NoteComposer'
-import { NoteItem } from '@/components/NoteItem'
-import { errorMessage, type Note } from '@/lib/notes'
+import { BrowserRouter, NavLink, Route, Routes, useLocation } from 'react-router'
+import { Toaster } from 'sonner'
+import { FileText } from 'lucide-react'
+import { useMe, type Me } from '@/hooks/useMe'
+import NotesPage from '@/pages/NotesPage'
+import CatalogPage from '@/pages/CatalogPage'
+import ProductPage from '@/pages/ProductPage'
+import AttributesPage from '@/pages/AttributesPage'
+import CoveragePage from '@/pages/CoveragePage'
+import UsersPage from '@/pages/UsersPage'
+import { AdminOnly } from '@/components/catalog/AdminOnly'
 
-type LoadState = { status: 'loading' } | { status: 'error'; message: string } | { status: 'ready' }
+const navCls = ({ isActive }: { isActive: boolean }) =>
+  `rounded-lg px-3 py-2 text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-cobalt ${
+    isActive ? 'bg-cobalt text-white' : 'text-ink-soft hover:bg-cobalt-wash hover:text-ink'
+  }`
 
-export default function App() {
-  const [notes, setNotes] = useState<Note[]>([])
-  const [load, setLoad] = useState<LoadState>({ status: 'loading' })
-
-  const fetchNotes = useCallback(async () => {
-    setLoad({ status: 'loading' })
-    try {
-      const { data, error } = await client.GET('/api/notes/')
-      if (error || !data) {
-        setLoad({
-          status: 'error',
-          message: errorMessage(error, 'The server didn’t return the notes.'),
-        })
-        return
-      }
-      setNotes(data)
-      setLoad({ status: 'ready' })
-    } catch (e) {
-      setLoad({ status: 'error', message: errorMessage(e, 'Couldn’t reach the server.') })
-    }
-  }, [])
-
-  useEffect(() => {
-    void fetchNotes()
-  }, [fetchNotes])
-
-  async function createNote(title: string, body: string): Promise<boolean> {
-    try {
-      const { data, error } = await client.POST('/api/notes/', { body: { title, body } })
-      if (error || !data) {
-        toast.error(`Note not added: ${errorMessage(error, 'unknown server error')}`)
-        return false
-      }
-      setNotes((prev) => [data, ...prev])
-      toast.success('Note added')
-      return true
-    } catch (e) {
-      toast.error(`Note not added: ${errorMessage(e, 'couldn’t reach the server')}`)
-      return false
-    }
-  }
-
-  async function saveNote(id: number, title: string, body: string): Promise<boolean> {
-    try {
-      const { data, error } = await client.PUT('/api/notes/{note_id}', {
-        params: { path: { note_id: id } },
-        body: { title, body },
-      })
-      if (error || !data) {
-        toast.error(`Changes not saved: ${errorMessage(error, 'unknown server error')}`)
-        return false
-      }
-      setNotes((prev) => prev.map((n) => (n.id === id ? data : n)))
-      toast.success('Changes saved')
-      return true
-    } catch (e) {
-      toast.error(`Changes not saved: ${errorMessage(e, 'couldn’t reach the server')}`)
-      return false
-    }
-  }
-
-  async function deleteNote(id: number): Promise<boolean> {
-    try {
-      const { error, response } = await client.DELETE('/api/notes/{note_id}', {
-        params: { path: { note_id: id } },
-      })
-      if (error || !response.ok) {
-        toast.error(
-          `Note not deleted: ${errorMessage(error, `server responded ${response.status}`)}`,
-        )
-        return false
-      }
-      setNotes((prev) => prev.filter((n) => n.id !== id))
-      toast.success('Note deleted')
-      return true
-    } catch (e) {
-      toast.error(`Note not deleted: ${errorMessage(e, 'couldn’t reach the server')}`)
-      return false
-    }
-  }
-
+function Header({ me }: { me: Me | null }) {
+  const { pathname } = useLocation()
+  const inBrowse = pathname === '/catalog' || pathname.startsWith('/catalog/products/')
   return (
-    <div className="min-h-screen">
-      <Toaster position="bottom-right" richColors closeButton />
-      <header className="border-b border-line bg-sheet">
-        <div className="mx-auto flex max-w-6xl items-center gap-3 px-5 py-4 sm:px-8">
+    <header className="border-b border-line bg-sheet">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-3 px-5 py-3 sm:px-8">
+        <NavLink to="/" className="flex items-center gap-3">
           <span className="grid size-9 place-items-center rounded-lg bg-cobalt text-white">
             <FileText className="size-5" />
           </span>
-          <h1 className="text-xl font-extrabold tracking-tight sm:text-2xl">Sync Test Notes</h1>
-        </div>
-      </header>
-      <div className="caution-tape">
-        <p className="mx-auto flex max-w-6xl items-center gap-2 px-5 py-2.5 text-sm font-semibold text-ink sm:px-8">
-          <AlertTriangle className="size-4 shrink-0" />
-          Throwaway test app. Don’t enter real business, patient, or customer data.
-        </p>
+          <span className="text-xl font-extrabold tracking-tight">Sync Test Notes</span>
+        </NavLink>
+        <nav aria-label="Main" className="-mx-1 flex flex-1 gap-1 overflow-x-auto px-1">
+          <NavLink to="/" end className={navCls}>
+            Notes
+          </NavLink>
+          {me?.is_admin && (
+            <>
+              <NavLink to="/catalog" className={() => navCls({ isActive: inBrowse })}>
+                Product catalog
+              </NavLink>
+              <NavLink to="/catalog/attributes" className={navCls}>
+                Attributes
+              </NavLink>
+              <NavLink to="/catalog/coverage" className={navCls}>
+                Coverage and sync
+              </NavLink>
+              <NavLink to="/users" className={navCls}>
+                Users
+              </NavLink>
+            </>
+          )}
+        </nav>
+        {me && (
+          <span className="text-sm text-ink-soft">
+            {me.name || me.email}
+            <span className="ml-2 rounded-full bg-cobalt-wash px-2 py-0.5 text-xs font-semibold text-cobalt-deep">
+              {me.role}
+            </span>
+          </span>
+        )}
       </div>
+    </header>
+  )
+}
 
-      <main className="mx-auto grid max-w-6xl gap-8 px-5 py-8 sm:px-8 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] lg:gap-10">
-        <aside className="lg:sticky lg:top-8 lg:self-start">
-          <NoteComposer onCreate={createNote} />
-        </aside>
-
-        <section aria-labelledby="notes-heading">
-          <div className="mb-4 flex items-baseline justify-between">
-            <h2 id="notes-heading" className="text-lg font-bold tracking-tight">
-              Notes
-              {load.status === 'ready' && (
-                <span className="ml-2 font-medium text-ink-soft">{notes.length}</span>
-              )}
-            </h2>
-            <span className="text-sm text-ink-soft">Newest first</span>
-          </div>
-
-          {load.status === 'loading' && (
-            <div className="flex items-center gap-2 rounded-2xl border border-line bg-sheet p-6 text-ink-soft">
-              <Loader2 className="size-4 animate-spin" /> Loading notes…
-            </div>
-          )}
-
-          {load.status === 'error' && (
-            <div role="alert" className="rounded-2xl border border-magenta bg-magenta-wash p-6">
-              <p className="font-semibold">Notes couldn’t be loaded.</p>
-              <p className="mt-1 text-sm text-ink-soft">{load.message}</p>
-              <button
-                type="button"
-                onClick={() => void fetchNotes()}
-                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-ink hover:bg-paper focus-visible:outline-2 focus-visible:outline-cobalt"
-              >
-                <RefreshCw className="size-4" /> Try again
-              </button>
-            </div>
-          )}
-
-          {load.status === 'ready' && notes.length === 0 && (
-            <div className="rounded-2xl border-2 border-dashed border-line px-6 py-14 text-center">
-              <p className="font-semibold">No notes yet</p>
-              <p className="mt-1 text-sm text-ink-soft">Add one with the form to start the test.</p>
-            </div>
-          )}
-
-          {load.status === 'ready' && notes.length > 0 && (
-            <ul className="space-y-4">
-              {notes.map((n) => (
-                <NoteItem key={n.id} note={n} onSave={saveNote} onDelete={deleteNote} />
-              ))}
-            </ul>
-          )}
-        </section>
-      </main>
-    </div>
+export default function App() {
+  const { me, loaded } = useMe()
+  const guard = (el: React.ReactNode) => (
+    <AdminOnly me={me} loaded={loaded}>
+      {el}
+    </AdminOnly>
+  )
+  return (
+    <BrowserRouter>
+      <div className="min-h-screen">
+        <Toaster position="bottom-right" richColors closeButton />
+        <Header me={me} />
+        <Routes>
+          <Route path="/" element={<NotesPage />} />
+          <Route path="/catalog" element={guard(<CatalogPage />)} />
+          <Route path="/catalog/products/:productId" element={guard(<ProductPage />)} />
+          <Route path="/catalog/attributes" element={guard(<AttributesPage />)} />
+          <Route path="/catalog/coverage" element={guard(<CoveragePage />)} />
+          <Route path="/users" element={guard(<UsersPage />)} />
+          <Route
+            path="*"
+            element={
+              <main className="mx-auto max-w-3xl px-5 py-16 text-center">
+                <p className="text-lg font-bold">This page doesn’t exist.</p>
+                <NavLink to="/" className="mt-3 inline-block font-semibold text-cobalt">
+                  Go to notes
+                </NavLink>
+              </main>
+            }
+          />
+        </Routes>
+      </div>
+    </BrowserRouter>
   )
 }

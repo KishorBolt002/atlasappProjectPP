@@ -1,6 +1,8 @@
 {
   "version": 1,
-  "connector_types": [],
+  "connector_types": [
+    "salesforce"
+  ],
   "custom_connector_ids": [],
   "custom_connector_labels": [],
   "mcp_handles": [],

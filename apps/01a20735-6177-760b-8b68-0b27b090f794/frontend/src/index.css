@@ -42,3 +42,12 @@ html {
     transition: none !important;
   }
 }
+
+@theme {
+  --color-cobalt-deep: #1d3fd6;
+  --color-magenta-deep: #c0135c;
+  --color-teal: #0fb5a6;
+  --color-teal-deep: #067a70;
+  --color-teal-wash: #dcf8f4;
+  --color-caution-wash: #fff4c2;
+}

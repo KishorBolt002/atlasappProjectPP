@@ -80,7 +80,7 @@ def get_current_user(
     The platform guarantees the user is authenticated. This dependency resolves
     their authorization role from the app's user management table.
     """
-    from src.models import AppUser  # ty: ignore[unresolved-import]
+    from src.models import AppUser
 
     email = request.headers.get(ATLAS_USER_EMAIL_HEADER, "").lower()
     if not email:

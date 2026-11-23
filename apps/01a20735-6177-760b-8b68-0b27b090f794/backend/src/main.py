@@ -10,7 +10,7 @@ import logging
 from fastapi import FastAPI
 
 from src.clients.agents import router as _atlas_agent_sdk_router
-from src.routers import health, notes
+from src.routers import catalog, catalog_sync, health, notes, users
 
 logging.basicConfig(level=logging.INFO)
 
@@ -25,6 +25,9 @@ app = FastAPI(title="Sync Test Notes", version="1.0.0")
 app.include_router(_atlas_agent_sdk_router)
 app.include_router(health.router)
 app.include_router(notes.router)
+app.include_router(users.router)
+app.include_router(catalog.router)
+app.include_router(catalog_sync.router)
 
 
 # Add your API endpoints below

@@ -1,0 +1,58 @@
+# Salesforce Revenue Cloud Product Catalog — verified mapping
+# Verified live (read-only) on 2026-11-23 against org "BoltToday" using describe + SOQL.
+# Connector user: System Administrator profile with ProductCatalogManagementAdministrator
+# and ProductCatalogManagementViewer permission sets (shared connector identity).
+# API version: the connector client defaults to v59.0; the app uses v66.0 because
+# v66 exposes Revenue Cloud fields missing from v59 (ProductComponentGroup.ParentGroupId,
+# ProductSellingModelOption.IsDefault, ProductRelatedComponent.ChildProductClassificationId, ...).
+# Change tracking: every mapped object exposes SystemModstamp (incremental watermark).
+# Org is single-currency (no CurrencyIsoCode fields).
+
+api_version: "66.0"
+writable_fields:
+  Product2.Description:
+    label: Product Description
+    type: textarea
+    length: 4000
+    updateable: true   # describe, connector user
+    concurrency: LastModifiedDate + If-Unmodified-Since header on PATCH
+
+objects:
+  ProductCatalog:          {label: Catalog, records: 6, fields: [Name, Code, Description, CatalogType, EffectiveStartDate, EffectiveEndDate, NumberOfCategories]}
+  ProductCategory:         {label: Category, records: 14, fields: [Name, Code, Description, CatalogId, ParentCategoryId, SortOrder, IsNavigational, NumberOfProducts], hierarchy: ParentCategoryId -> ProductCategory}
+  ProductCategoryProduct:  {label: Product Category Product (membership), records: 40, fields: [ProductCategoryId, ProductId, CatalogId]}
+  Product2:                {label: Product, records: 58, fields: [Name, ProductCode, Description, IsActive, Family, Type, ConfigureDuringSale, BasedOnId, StockKeepingUnit, QuantityUnitOfMeasure, IsAssetizable, IsSoldOnlyWithOtherProds, AvailabilityDate, DiscontinuedDate, EndOfLifeDate, HelpText, DisplayUrl, SpecificationType, IsArchived, DecompositionScope, UsageModelType, CanRamp, ExternalId, SourceProductId], notes: "Type picklist = Bundle; BasedOnId -> ProductClassification"}
+  ProductClassification:   {label: Product Classification, records: 19, fields: [Name, Code, Status, ParentProductClassificationId]}
+  ProductClassificationAttr: {label: Product Classification Attribute, records: 27, fields: [ProductClassificationId, AttributeDefinitionId, AttributeCategoryId, AttributeNameOverride, DefaultValue, IsRequired, IsHidden, IsReadOnly, IsPriceImpacting, Status, Sequence, DisplayType, ExcludedPicklistValues, MinimumValue, MaximumValue, StepValue, HelpText, Description]}
+  AttributeDefinition:     {label: Attribute Definition, records: 22, fields: [Name, Label, Code, DeveloperName, Description, DataType, IsActive, IsRequired, DefaultValue, PicklistId, DefaultHelpText, UnitOfMeasureId]}
+  AttributeCategory:       {label: Attribute Category (attribute group), records: 13, fields: [Name, Code, Description]}
+  AttributeCategoryAttribute: {label: Attribute Category Attribute, records: 12, fields: [AttributeCategoryId, AttributeDefinitionId]}
+  AttributePicklist:       {label: Attribute Picklist, records: 15, fields: [Name, Code, Description, Status, DataType]}
+  AttributePicklistValue:  {label: Attribute Picklist Value, records: 46, fields: [PicklistId, Name, Code, DisplayValue, Value, IsDefault, Sequence, Status, Abbreviation]}
+  ProductAttributeDefinition: {label: Product Attribute Definition (product attribute assignment), records: 15, fields: [Product2Id, AttributeDefinitionId, AttributeCategoryId, ProductClassificationAttributeId, AttributeNameOverride, DefaultValue, IsRequired, IsHidden, IsReadOnly, IsPriceImpacting, Status, Sequence, DisplayType, ExcludedPicklistValues, MinimumValue, MaximumValue, HelpText, Description, OverrideContextId]}
+  ProductComponentGroup:   {label: Product Component Group (bundle group), records: 15, fields: [Name, Code, ParentProductId, ParentGroupId, Description, MinBundleComponents, MaxBundleComponents, Sequence]}
+  ProductRelatedComponent: {label: Product Related Component (bundle component), records: 25, fields: [ParentProductId, ChildProductId, ProductComponentGroupId, ProductRelationshipTypeId, Quantity, MinQuantity, MaxQuantity, IsComponentRequired, IsDefaultComponent, IsQuantityEditable, DoesBundlePriceIncludeChild, Sequence, ParentSellingModelId, ChildSellingModelId, ChildProductClassificationId, QuantityScaleMethod]}
+  ProductRelationshipType: {label: Product Relationship Type, records: 3, fields: [Name, MainProductRoleCat, AssociatedProductRoleCat]}
+  ProductSellingModel:     {label: Product Selling Model, records: 9, fields: [Name, SellingModelType, PricingTerm, PricingTermUnit, Status]}
+  ProductSellingModelOption: {label: Product Selling Model Option, records: 38, fields: [ProductSellingModelId, Product2Id, IsDefault]}
+  Pricebook2:              {label: Price Book, records: 4, fields: [Name, Description, IsActive, IsStandard, IsArchived, ValidFrom, ValidTo]}
+  PricebookEntry:          {label: Price Book Entry, records: 59, fields: [Pricebook2Id, Product2Id, ProductSellingModelId, UnitPrice, IsActive, UseStandardPrice, IsArchived]}
+
+# Present and readable, counted for coverage, not mapped into the UI in this change.
+coverage_only:
+  ProductQualification: 2
+  ProductDisqualification: 1
+  ProductCategoryQualification: 0
+  ProductCategoryDisqual: 0
+  ProductRampSegment: 2
+  ProductUsageGrant: 2
+  PriceBookEntryDerivedPrice: 2
+  ProductConfigurationRule: 0
+  ProductComponentGrpOverride: 0
+  ProductRelComponentOverride: 0
+  ProductSpecificationType: 2
+  ProductSpecificationRecType: 2
+
+# Not present in this org: Product variants as a separate object (ProductAttribute /
+# variation parent model from B2B Commerce) do not exist; Product2DataTranslation and
+# ProductCategoryDataTranslation are not queryable.

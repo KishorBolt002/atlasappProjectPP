@@ -54,6 +54,293 @@
           "description": "Permanently delete a note."
         }
       ]
+    },
+    {
+      "id": "app_user",
+      "name": "App user role",
+      "kind": "object",
+      "description": "Role assignment for a platform-authenticated person: admin or viewer. Users not listed default to viewer. Admins may use the product catalog, save product descriptions, and manage users; everyone can use notes. The project owner is seeded as the first admin; the last admin cannot be demoted or removed.",
+      "bindings": [
+        {
+          "kind": "table",
+          "target": "app_users",
+          "description": "Role per lowercase email.",
+          "role": "source"
+        },
+        {
+          "kind": "schema",
+          "target": "UserResponse",
+          "description": "User as returned by the API."
+        },
+        {
+          "kind": "schema",
+          "target": "MeResponse",
+          "description": "Caller identity and role."
+        },
+        {
+          "kind": "operation",
+          "target": "get_me_api_users_me_get",
+          "description": "Current user's role."
+        },
+        {
+          "kind": "operation",
+          "target": "list_users_api_users__get",
+          "description": "Admin: list users."
+        },
+        {
+          "kind": "operation",
+          "target": "create_user_api_users__post",
+          "description": "Admin: add a user with a role."
+        },
+        {
+          "kind": "operation",
+          "target": "update_user_api_users__user_id__put",
+          "description": "Admin: change role."
+        },
+        {
+          "kind": "operation",
+          "target": "delete_user_api_users__user_id__delete",
+          "description": "Admin: remove a user (falls back to viewer)."
+        }
+      ]
+    },
+    {
+      "id": "catalog_record",
+      "name": "Cached Revenue Cloud catalog record",
+      "kind": "object",
+      "description": "Local read cache of one Salesforce Revenue Cloud catalog record (ProductCatalog, ProductCategory, ProductCategoryProduct, Product2, ProductClassification, ProductClassificationAttr, AttributeDefinition, AttributeCategory, AttributeCategoryAttribute, AttributePicklist, AttributePicklistValue, ProductAttributeDefinition, ProductComponentGroup, ProductRelatedComponent, ProductRelationshipType, ProductSellingModel, ProductSellingModelOption, Pricebook2, PricebookEntry). Salesforce is the source of truth; rows are written only by the catalog sync and by the verified reload after a description save.",
+      "bindings": [
+        {
+          "kind": "table",
+          "target": "catalog_records",
+          "description": "One row per Salesforce record; fields JSONB holds the metadata-verified fields.",
+          "role": "cache",
+          "identity": "sf_id is the 18-character Salesforce record Id (unique)."
+        },
+        {
+          "kind": "external",
+          "target": "salesforce:RevenueCloudCatalog",
+          "description": "Read through the Salesforce REST connector, API v66.0, SOQL ordered by Id; incremental by SystemModstamp.",
+          "role": "source"
+        }
+      ]
+    },
+    {
+      "id": "product_catalog",
+      "name": "Product catalog and category",
+      "kind": "object",
+      "description": "Revenue Cloud catalogs (ProductCatalog) contain categories (ProductCategory, hierarchy via ParentCategoryId); products join categories through ProductCategoryProduct memberships. Category product counts include descendant categories.",
+      "uses": [
+        "catalog_record"
+      ],
+      "bindings": [
+        {
+          "kind": "schema",
+          "target": "CatalogSummary",
+          "description": "Catalog with its category tree and counts."
+        },
+        {
+          "kind": "schema",
+          "target": "CategoryNode",
+          "description": "Category with children and direct/total product counts."
+        },
+        {
+          "kind": "operation",
+          "target": "get_overview_api_catalog_overview_get",
+          "description": "Catalogs, category trees, totals, coverage, and sync status from the cache."
+        }
+      ]
+    },
+    {
+      "id": "product",
+      "name": "Product",
+      "kind": "object",
+      "description": "Salesforce Product2 in the Revenue Cloud catalog, with classification (BasedOnId), category memberships, product and inherited classification attributes, bundle groups/components, selling model options, and price book entries. Search matches name, product code, description, or exact Id; filters by catalog, category (incl. descendants), bundle/simple, active, classification.",
+      "uses": [
+        "catalog_record",
+        "product_catalog"
+      ],
+      "bindings": [
+        {
+          "kind": "schema",
+          "target": "ProductListItem",
+          "description": "Product row in search results."
+        },
+        {
+          "kind": "schema",
+          "target": "ProductDetail",
+          "description": "Full product view."
+        },
+        {
+          "kind": "operation",
+          "target": "list_products_api_catalog_products__get",
+          "description": "Paginated product search from the cache."
+        },
+        {
+          "kind": "operation",
+          "target": "get_product_api_catalog_products__product_id__get",
+          "description": "Product detail from the cache."
+        },
+        {
+          "kind": "operation",
+          "target": "lookup_products_api_catalog_lookup_products__get",
+          "description": "Narrow lookup for assistants: matching products with catalogs and categories."
+        }
+      ]
+    },
+    {
+      "id": "product_attribute",
+      "name": "Product attribute and classification",
+      "kind": "object",
+      "description": "AttributeDefinition (data type, picklist), AttributeCategory groups via AttributeCategoryAttribute, ProductClassification with ProductClassificationAttr assignments (inherited through parent classifications), product-level ProductAttributeDefinition assignments that override classification attributes, and AttributePicklistValue values.",
+      "uses": [
+        "catalog_record"
+      ],
+      "bindings": [
+        {
+          "kind": "schema",
+          "target": "AttributeLibrary",
+          "description": "Definitions, groups, picklists, classifications."
+        },
+        {
+          "kind": "operation",
+          "target": "get_attribute_library_api_catalog_attributes_get",
+          "description": "Attribute library from the cache."
+        }
+      ]
+    },
+    {
+      "id": "catalog_object_coverage",
+      "name": "Catalog object coverage",
+      "kind": "object",
+      "description": "Per Salesforce object result of the last sync: synced, empty (readable, zero records), not_mapped (readable, not shown), not_available (not in org), blocked (no read permission or query rejected), error, or never_synced, with Salesforce and cached counts and fields missing from describe. UI sections depending on a blocked object show as unavailable rather than empty.",
+      "bindings": [
+        {
+          "kind": "table",
+          "target": "catalog_object_coverage",
+          "description": "One row per checked object.",
+          "role": "derived"
+        },
+        {
+          "kind": "schema",
+          "target": "CoverageItem",
+          "description": "Coverage row."
+        },
+        {
+          "kind": "schema",
+          "target": "SectionAvailability",
+          "description": "Whether a UI section's objects are readable."
+        }
+      ]
+    },
+    {
+      "id": "catalog_sync",
+      "name": "Catalog sync",
+      "kind": "action",
+      "description": "Admin-triggered, browser-driven sync of all catalog objects into the cache. 'Sync changes' reads records changed since the last successful run (SystemModstamp, 5-minute overlap); 'Full refresh' re-reads everything and removes records no longer returned by Salesforce. Read-only against Salesforce.",
+      "uses": [
+        "catalog_record",
+        "catalog_object_coverage"
+      ],
+      "bindings": [
+        {
+          "kind": "operation",
+          "target": "start_api_sync_catalog_start_post",
+          "description": "Start or resume an incremental sync."
+        },
+        {
+          "kind": "operation",
+          "target": "start_full_api_sync_catalog_start_full_post",
+          "description": "Start a full refresh."
+        },
+        {
+          "kind": "operation",
+          "target": "tick_api_sync_catalog__job_id__tick_post",
+          "description": "Run one bounded chunk."
+        },
+        {
+          "kind": "operation",
+          "target": "get_sync_status_api_catalog_sync_status_get",
+          "description": "Last synced time and last job outcome."
+        },
+        {
+          "kind": "function",
+          "target": "src/catalog/sync_catalog.py:catalog_tick",
+          "description": "Per-tick describe, count, page and upsert logic."
+        }
+      ]
+    },
+    {
+      "id": "product_description_update",
+      "name": "Product description update",
+      "kind": "action",
+      "description": "The only Salesforce write: one confirmed Product2.Description change for an exact 18-character Product2 Id. Admin-only. Live read and describe verify the field is updateable and within 4000 characters; the request must carry confirm=true and the LastModifiedDate the user reviewed; a mismatch returns 409 without writing, and the PATCH uses If-Unmodified-Since so Salesforce rejects races. The saved value is re-read and verified, then the cache row is refreshed. Blank text clears the description.",
+      "uses": [
+        "product",
+        "description_change"
+      ],
+      "bindings": [
+        {
+          "kind": "operation",
+          "target": "get_live_description_api_catalog_products__product_id__description_get",
+          "description": "Live current value, LastModifiedDate and field metadata."
+        },
+        {
+          "kind": "operation",
+          "target": "preview_description_api_catalog_products__product_id__description_preview_post",
+          "description": "Compare proposed vs current without writing."
+        },
+        {
+          "kind": "operation",
+          "target": "update_description_api_catalog_products__product_id__description_put",
+          "description": "Write one confirmed description."
+        },
+        {
+          "kind": "schema",
+          "target": "DescriptionUpdateRequest",
+          "description": "Proposed text, expected LastModifiedDate, confirm flag."
+        },
+        {
+          "kind": "schema",
+          "target": "DescriptionPreview",
+          "description": "Current vs proposed with problems."
+        },
+        {
+          "kind": "function",
+          "target": "src/catalog/description_service.py:apply_update",
+          "description": "Ordered safety checks, write, verification, audit."
+        },
+        {
+          "kind": "external",
+          "target": "salesforce:Product2.Description",
+          "description": "PATCH /sobjects/Product2/{Id} via the shared connector user.",
+          "role": "source"
+        }
+      ]
+    },
+    {
+      "id": "description_change",
+      "name": "Description change record",
+      "kind": "object",
+      "description": "Audit of each description save attempt: applied, conflict, failed (Salesforce error) or unverified, with previous and proposed text, requester email, and timestamps.",
+      "bindings": [
+        {
+          "kind": "table",
+          "target": "description_changes",
+          "description": "Append-only audit rows.",
+          "role": "source"
+        },
+        {
+          "kind": "schema",
+          "target": "DescriptionChangeItem",
+          "description": "Audit row."
+        },
+        {
+          "kind": "operation",
+          "target": "description_history_api_catalog_products__product_id__description_history_get",
+          "description": "Recent attempts for a product."
+        }
+      ]
     }
   ]
 }

@@ -1240,10 +1240,2310 @@
           }
         }
       }
+    },
+    "/api/users/me": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get Me",
+        "operationId": "get_me_api_users_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/": {
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "List Users",
+        "operationId": "list_users_api_users__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Users Api Users  Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Create User",
+        "operationId": "create_user_api_users__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{user_id}": {
+      "put": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Update User",
+        "operationId": "update_user_api_users__user_id__put",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Delete User",
+        "operationId": "delete_user_api_users__user_id__delete",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalog/overview": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Get Overview",
+        "operationId": "get_overview_api_catalog_overview_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogOverview"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalog/sync-status": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Get Sync Status",
+        "operationId": "get_sync_status_api_catalog_sync_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogSyncStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalog/products/": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "List Products",
+        "operationId": "list_products_api_catalog_products__get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 200
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Q"
+            }
+          },
+          {
+            "name": "catalog_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z0-9]{18}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Catalog Id"
+            }
+          },
+          {
+            "name": "category_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z0-9]{18}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category Id"
+            }
+          },
+          {
+            "name": "classification_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z0-9]{18}$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Classification Id"
+            }
+          },
+          {
+            "name": "product_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "bundle",
+                    "simple"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Product Type"
+            }
+          },
+          {
+            "name": "is_active",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Is Active"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 25,
+              "title": "Page Size"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductPage"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalog/products/{product_id}": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Get Product",
+        "operationId": "get_product_api_catalog_products__product_id__get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^01t[a-zA-Z0-9]{15}$",
+              "description": "Exact 18-character Salesforce Product2 record ID",
+              "title": "Product Id"
+            },
+            "description": "Exact 18-character Salesforce Product2 record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalog/attributes": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Get Attribute Library",
+        "operationId": "get_attribute_library_api_catalog_attributes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttributeLibrary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalog/lookup/products/": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Lookup Products",
+        "description": "Find products in the synced catalog by name, product code, description, or exact ID.",
+        "operationId": "lookup_products_api_catalog_lookup_products__get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200,
+              "title": "Q"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 25,
+              "minimum": 1,
+              "default": 10,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductLookupResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalog/products/{product_id}/description": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Get Live Description",
+        "description": "Read the current description and LastModifiedDate live from Salesforce.",
+        "operationId": "get_live_description_api_catalog_products__product_id__description_get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^01t[a-zA-Z0-9]{15}$",
+              "description": "Exact 18-character Salesforce Product2 record ID",
+              "title": "Product Id"
+            },
+            "description": "Exact 18-character Salesforce Product2 record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiveDescription"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Update Description",
+        "description": "Write one confirmed description to Salesforce Product2.Description.\n\nRequires confirm=true and the LastModifiedDate returned by the live read or\npreview; answers 409 without writing if the record changed since then.",
+        "operationId": "update_description_api_catalog_products__product_id__description_put",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^01t[a-zA-Z0-9]{15}$",
+              "description": "Exact 18-character Salesforce Product2 record ID",
+              "title": "Product Id"
+            },
+            "description": "Exact 18-character Salesforce Product2 record ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DescriptionUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DescriptionUpdateResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalog/products/{product_id}/description/preview": {
+      "post": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Preview Description",
+        "description": "Compare a proposed description with the live Salesforce value. Never writes.",
+        "operationId": "preview_description_api_catalog_products__product_id__description_preview_post",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^01t[a-zA-Z0-9]{15}$",
+              "description": "Exact 18-character Salesforce Product2 record ID",
+              "title": "Product Id"
+            },
+            "description": "Exact 18-character Salesforce Product2 record ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DescriptionPreviewRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DescriptionPreview"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/catalog/products/{product_id}/description/history": {
+      "get": {
+        "tags": [
+          "catalog"
+        ],
+        "summary": "Description History",
+        "operationId": "description_history_api_catalog_products__product_id__description_history_get",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^01t[a-zA-Z0-9]{15}$",
+              "description": "Exact 18-character Salesforce Product2 record ID",
+              "title": "Product Id"
+            },
+            "description": "Exact 18-character Salesforce Product2 record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DescriptionChangeItem"
+                  },
+                  "title": "Response Description History Api Catalog Products  Product Id  Description History Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sync/catalog/start-full": {
+      "post": {
+        "tags": [
+          "catalog-sync"
+        ],
+        "summary": "Start Full",
+        "description": "Start a full refresh: re-read everything and drop records deleted in Salesforce.",
+        "operationId": "start_full_api_sync_catalog_start_full_post",
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncJobView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sync/catalog/start": {
+      "post": {
+        "tags": [
+          "catalog-sync"
+        ],
+        "summary": "Start",
+        "operationId": "start_api_sync_catalog_start_post",
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncJobView"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sync/catalog/{job_id}/tick": {
+      "post": {
+        "tags": [
+          "catalog-sync"
+        ],
+        "summary": "Tick",
+        "operationId": "tick_api_sync_catalog__job_id__tick_post",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncJobView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AttributeCategoryItem": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "attributes": {
+            "items": {
+              "$ref": "#/components/schemas/RecordRef"
+            },
+            "type": "array",
+            "title": "Attributes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "name",
+          "code",
+          "description",
+          "attributes"
+        ],
+        "title": "AttributeCategoryItem"
+      },
+      "AttributeDefinitionItem": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "developer_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Developer Name"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "data_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Type"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          },
+          "is_required": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Required"
+          },
+          "default_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Value"
+          },
+          "picklist": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "picklist_values": {
+            "items": {
+              "$ref": "#/components/schemas/PicklistValueItem"
+            },
+            "type": "array",
+            "title": "Picklist Values"
+          },
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/RecordRef"
+            },
+            "type": "array",
+            "title": "Categories"
+          },
+          "classification_count": {
+            "type": "integer",
+            "title": "Classification Count"
+          },
+          "product_count": {
+            "type": "integer",
+            "title": "Product Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "name",
+          "label",
+          "code",
+          "developer_name",
+          "description",
+          "data_type",
+          "is_active",
+          "is_required",
+          "default_value",
+          "picklist",
+          "picklist_values",
+          "categories",
+          "classification_count",
+          "product_count"
+        ],
+        "title": "AttributeDefinitionItem"
+      },
+      "AttributeLibrary": {
+        "properties": {
+          "definitions": {
+            "items": {
+              "$ref": "#/components/schemas/AttributeDefinitionItem"
+            },
+            "type": "array",
+            "title": "Definitions"
+          },
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/AttributeCategoryItem"
+            },
+            "type": "array",
+            "title": "Categories"
+          },
+          "picklists": {
+            "items": {
+              "$ref": "#/components/schemas/PicklistItem"
+            },
+            "type": "array",
+            "title": "Picklists"
+          },
+          "classifications": {
+            "items": {
+              "$ref": "#/components/schemas/ClassificationItem"
+            },
+            "type": "array",
+            "title": "Classifications"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/SectionAvailability"
+            },
+            "type": "array",
+            "title": "Sections"
+          }
+        },
+        "type": "object",
+        "required": [
+          "definitions",
+          "categories",
+          "picklists",
+          "classifications",
+          "sections"
+        ],
+        "title": "AttributeLibrary"
+      },
+      "BundleComponentItem": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "child_product": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "child_classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "relationship_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Relationship Type"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "min_quantity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Quantity"
+          },
+          "max_quantity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Quantity"
+          },
+          "is_required": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Required"
+          },
+          "is_default": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Default"
+          },
+          "is_quantity_editable": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Quantity Editable"
+          },
+          "price_included_in_bundle": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Included In Bundle"
+          },
+          "sequence": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sequence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "child_product",
+          "child_classification",
+          "relationship_type",
+          "quantity",
+          "min_quantity",
+          "max_quantity",
+          "is_required",
+          "is_default",
+          "is_quantity_editable",
+          "price_included_in_bundle",
+          "sequence"
+        ],
+        "title": "BundleComponentItem"
+      },
+      "BundleGroupItem": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "parent_group_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Group Id"
+          },
+          "min_components": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Components"
+          },
+          "max_components": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Components"
+          },
+          "sequence": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sequence"
+          },
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/BundleComponentItem"
+            },
+            "type": "array",
+            "title": "Components"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "name",
+          "code",
+          "description",
+          "parent_group_id",
+          "min_components",
+          "max_components",
+          "sequence",
+          "components"
+        ],
+        "title": "BundleGroupItem"
+      },
+      "BundleStructure": {
+        "properties": {
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/BundleGroupItem"
+            },
+            "type": "array",
+            "title": "Groups"
+          },
+          "ungrouped_components": {
+            "items": {
+              "$ref": "#/components/schemas/BundleComponentItem"
+            },
+            "type": "array",
+            "title": "Ungrouped Components"
+          }
+        },
+        "type": "object",
+        "required": [
+          "groups",
+          "ungrouped_components"
+        ],
+        "title": "BundleStructure"
+      },
+      "CatalogOverview": {
+        "properties": {
+          "sync": {
+            "$ref": "#/components/schemas/CatalogSyncStatus"
+          },
+          "totals": {
+            "$ref": "#/components/schemas/CatalogTotals"
+          },
+          "catalogs": {
+            "items": {
+              "$ref": "#/components/schemas/CatalogSummary"
+            },
+            "type": "array",
+            "title": "Catalogs"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/SectionAvailability"
+            },
+            "type": "array",
+            "title": "Sections"
+          },
+          "coverage": {
+            "items": {
+              "$ref": "#/components/schemas/CoverageItem"
+            },
+            "type": "array",
+            "title": "Coverage"
+          },
+          "salesforce_instance_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salesforce Instance Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sync",
+          "totals",
+          "catalogs",
+          "sections",
+          "coverage",
+          "salesforce_instance_url"
+        ],
+        "title": "CatalogOverview"
+      },
+      "CatalogSummary": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "catalog_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Catalog Type"
+          },
+          "effective_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective Start"
+          },
+          "effective_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Effective End"
+          },
+          "category_count": {
+            "type": "integer",
+            "title": "Category Count"
+          },
+          "product_count": {
+            "type": "integer",
+            "title": "Product Count"
+          },
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/CategoryNode"
+            },
+            "type": "array",
+            "title": "Categories"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "name",
+          "code",
+          "description",
+          "catalog_type",
+          "effective_start",
+          "effective_end",
+          "category_count",
+          "product_count",
+          "categories"
+        ],
+        "title": "CatalogSummary"
+      },
+      "CatalogSyncStatus": {
+        "properties": {
+          "has_synced": {
+            "type": "boolean",
+            "title": "Has Synced"
+          },
+          "last_synced_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Synced At"
+          },
+          "last_job_status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Job Status"
+          },
+          "last_job_mode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Job Mode"
+          },
+          "last_job_finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Job Finished At"
+          },
+          "last_failure_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Failure Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "has_synced",
+          "last_synced_at",
+          "last_job_status",
+          "last_job_mode",
+          "last_job_finished_at",
+          "last_failure_reason"
+        ],
+        "title": "CatalogSyncStatus"
+      },
+      "CatalogTotals": {
+        "properties": {
+          "catalogs": {
+            "type": "integer",
+            "title": "Catalogs"
+          },
+          "categories": {
+            "type": "integer",
+            "title": "Categories"
+          },
+          "products": {
+            "type": "integer",
+            "title": "Products"
+          },
+          "classifications": {
+            "type": "integer",
+            "title": "Classifications"
+          },
+          "attribute_definitions": {
+            "type": "integer",
+            "title": "Attribute Definitions"
+          },
+          "price_books": {
+            "type": "integer",
+            "title": "Price Books"
+          },
+          "bundles": {
+            "type": "integer",
+            "title": "Bundles"
+          }
+        },
+        "type": "object",
+        "required": [
+          "catalogs",
+          "categories",
+          "products",
+          "classifications",
+          "attribute_definitions",
+          "price_books",
+          "bundles"
+        ],
+        "title": "CatalogTotals"
+      },
+      "CategoryMembership": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "catalog": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "category": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "category_path": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Category Path"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "catalog",
+          "category",
+          "category_path"
+        ],
+        "title": "CategoryMembership"
+      },
+      "CategoryNode": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "sort_order": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sort Order"
+          },
+          "is_navigational": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Navigational"
+          },
+          "product_count": {
+            "type": "integer",
+            "title": "Product Count"
+          },
+          "total_product_count": {
+            "type": "integer",
+            "title": "Total Product Count"
+          },
+          "children": {
+            "items": {
+              "$ref": "#/components/schemas/CategoryNode"
+            },
+            "type": "array",
+            "title": "Children"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "name",
+          "code",
+          "description",
+          "sort_order",
+          "is_navigational",
+          "product_count",
+          "total_product_count",
+          "children"
+        ],
+        "title": "CategoryNode"
+      },
+      "ClassificationAttributeItem": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "definition": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "category": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "is_required": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Required"
+          },
+          "default_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Value"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "name",
+          "definition",
+          "category",
+          "is_required",
+          "default_value",
+          "status"
+        ],
+        "title": "ClassificationAttributeItem"
+      },
+      "ClassificationItem": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "parent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "product_count": {
+            "type": "integer",
+            "title": "Product Count"
+          },
+          "attributes": {
+            "items": {
+              "$ref": "#/components/schemas/ClassificationAttributeItem"
+            },
+            "type": "array",
+            "title": "Attributes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "name",
+          "code",
+          "status",
+          "parent",
+          "product_count",
+          "attributes"
+        ],
+        "title": "ClassificationItem"
+      },
+      "CoverageItem": {
+        "properties": {
+          "object_api_name": {
+            "type": "string",
+            "title": "Object Api Name"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "section": {
+            "type": "string",
+            "title": "Section"
+          },
+          "mapped": {
+            "type": "boolean",
+            "title": "Mapped"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "synced",
+              "empty",
+              "not_mapped",
+              "not_available",
+              "blocked",
+              "error",
+              "never_synced"
+            ],
+            "title": "Status"
+          },
+          "salesforce_count": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salesforce Count"
+          },
+          "cached_count": {
+            "type": "integer",
+            "title": "Cached Count"
+          },
+          "missing_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Missing Fields"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          },
+          "checked_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "object_api_name",
+          "label",
+          "section",
+          "mapped",
+          "status",
+          "salesforce_count",
+          "cached_count",
+          "missing_fields",
+          "detail",
+          "checked_at"
+        ],
+        "title": "CoverageItem"
+      },
+      "DescriptionChangeItem": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "product_sf_id": {
+            "type": "string",
+            "title": "Product Sf Id"
+          },
+          "product_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Name"
+          },
+          "outcome": {
+            "type": "string",
+            "title": "Outcome"
+          },
+          "previous_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Description"
+          },
+          "proposed_description": {
+            "type": "string",
+            "title": "Proposed Description"
+          },
+          "error_detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Detail"
+          },
+          "requested_by": {
+            "type": "string",
+            "title": "Requested By"
+          },
+          "expected_last_modified": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expected Last Modified"
+          },
+          "salesforce_last_modified_after": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salesforce Last Modified After"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "product_sf_id",
+          "product_name",
+          "outcome",
+          "previous_description",
+          "proposed_description",
+          "error_detail",
+          "requested_by",
+          "expected_last_modified",
+          "salesforce_last_modified_after",
+          "created_at"
+        ],
+        "title": "DescriptionChangeItem"
+      },
+      "DescriptionPreview": {
+        "properties": {
+          "product_sf_id": {
+            "type": "string",
+            "title": "Product Sf Id"
+          },
+          "product_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Name"
+          },
+          "current_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Description"
+          },
+          "proposed_description": {
+            "type": "string",
+            "title": "Proposed Description"
+          },
+          "changed": {
+            "type": "boolean",
+            "title": "Changed"
+          },
+          "clears_description": {
+            "type": "boolean",
+            "title": "Clears Description"
+          },
+          "proposed_length": {
+            "type": "integer",
+            "title": "Proposed Length"
+          },
+          "max_length": {
+            "type": "integer",
+            "title": "Max Length"
+          },
+          "writable": {
+            "type": "boolean",
+            "title": "Writable"
+          },
+          "last_modified": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Modified"
+          },
+          "problems": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Problems"
+          },
+          "can_apply": {
+            "type": "boolean",
+            "title": "Can Apply"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_sf_id",
+          "product_name",
+          "current_description",
+          "proposed_description",
+          "changed",
+          "clears_description",
+          "proposed_length",
+          "max_length",
+          "writable",
+          "last_modified",
+          "problems",
+          "can_apply"
+        ],
+        "title": "DescriptionPreview"
+      },
+      "DescriptionPreviewRequest": {
+        "properties": {
+          "proposed_description": {
+            "type": "string",
+            "maxLength": 32000,
+            "title": "Proposed Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "proposed_description"
+        ],
+        "title": "DescriptionPreviewRequest"
+      },
+      "DescriptionUpdateRequest": {
+        "properties": {
+          "proposed_description": {
+            "type": "string",
+            "maxLength": 32000,
+            "title": "Proposed Description"
+          },
+          "expected_last_modified": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expected Last Modified"
+          },
+          "confirm": {
+            "type": "boolean",
+            "title": "Confirm"
+          }
+        },
+        "type": "object",
+        "required": [
+          "proposed_description",
+          "expected_last_modified",
+          "confirm"
+        ],
+        "title": "DescriptionUpdateRequest"
+      },
+      "DescriptionUpdateResult": {
+        "properties": {
+          "change_id": {
+            "type": "integer",
+            "title": "Change Id"
+          },
+          "product_sf_id": {
+            "type": "string",
+            "title": "Product Sf Id"
+          },
+          "product_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Name"
+          },
+          "previous_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Description"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "last_modified": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Modified"
+          },
+          "verified": {
+            "type": "boolean",
+            "title": "Verified"
+          }
+        },
+        "type": "object",
+        "required": [
+          "change_id",
+          "product_sf_id",
+          "product_name",
+          "previous_description",
+          "description",
+          "last_modified",
+          "verified"
+        ],
+        "title": "DescriptionUpdateResult"
+      },
+      "FieldMetadataOut": {
+        "properties": {
+          "object_api_name": {
+            "type": "string",
+            "title": "Object Api Name"
+          },
+          "field_api_name": {
+            "type": "string",
+            "title": "Field Api Name"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "type": {
+            "type": "string",
+            "title": "Type"
+          },
+          "max_length": {
+            "type": "integer",
+            "title": "Max Length"
+          },
+          "updateable": {
+            "type": "boolean",
+            "title": "Updateable"
+          }
+        },
+        "type": "object",
+        "required": [
+          "object_api_name",
+          "field_api_name",
+          "label",
+          "type",
+          "max_length",
+          "updateable"
+        ],
+        "title": "FieldMetadataOut"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -1269,6 +3569,110 @@
           "status"
         ],
         "title": "HealthResponse"
+      },
+      "LiveDescription": {
+        "properties": {
+          "product_sf_id": {
+            "type": "string",
+            "title": "Product Sf Id"
+          },
+          "product_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Name"
+          },
+          "current_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Description"
+          },
+          "last_modified": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Modified"
+          },
+          "last_modified_by": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Modified By"
+          },
+          "field": {
+            "$ref": "#/components/schemas/FieldMetadataOut"
+          },
+          "cached_description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cached Description"
+          },
+          "cache_was_stale": {
+            "type": "boolean",
+            "title": "Cache Was Stale"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_sf_id",
+          "product_name",
+          "current_description",
+          "last_modified",
+          "last_modified_by",
+          "field",
+          "cached_description",
+          "cache_was_stale"
+        ],
+        "title": "LiveDescription"
+      },
+      "MeResponse": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "is_admin": {
+            "type": "boolean",
+            "title": "Is Admin"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email",
+          "name",
+          "role",
+          "is_admin"
+        ],
+        "title": "MeResponse"
       },
       "NoteCreate": {
         "properties": {
@@ -1349,6 +3753,1065 @@
         ],
         "title": "NoteUpdate"
       },
+      "PicklistItem": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "data_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Type"
+          },
+          "values": {
+            "items": {
+              "$ref": "#/components/schemas/PicklistValueItem"
+            },
+            "type": "array",
+            "title": "Values"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "name",
+          "code",
+          "status",
+          "data_type",
+          "values"
+        ],
+        "title": "PicklistItem"
+      },
+      "PicklistValueItem": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "is_default": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Default"
+          },
+          "sequence": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sequence"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "label",
+          "value",
+          "code",
+          "is_default",
+          "sequence",
+          "status"
+        ],
+        "title": "PicklistValueItem"
+      },
+      "PriceEntryItem": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "price_book": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "price_book_is_standard": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Book Is Standard"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Price"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          },
+          "use_standard_price": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Use Standard Price"
+          },
+          "selling_model": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "price_book",
+          "price_book_is_standard",
+          "unit_price",
+          "is_active",
+          "use_standard_price",
+          "selling_model"
+        ],
+        "title": "PriceEntryItem"
+      },
+      "ProductAttributeItem": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "product",
+              "classification"
+            ],
+            "title": "Source"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "definition": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "data_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Type"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "default_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Default Value"
+          },
+          "is_required": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Required"
+          },
+          "is_hidden": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Hidden"
+          },
+          "is_read_only": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Read Only"
+          },
+          "is_price_impacting": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Price Impacting"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "sequence": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sequence"
+          },
+          "display_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Type"
+          },
+          "picklist_values": {
+            "items": {
+              "$ref": "#/components/schemas/PicklistValueItem"
+            },
+            "type": "array",
+            "title": "Picklist Values"
+          },
+          "excluded_picklist_values": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Excluded Picklist Values"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "source",
+          "name",
+          "definition",
+          "data_type",
+          "category",
+          "default_value",
+          "is_required",
+          "is_hidden",
+          "is_read_only",
+          "is_price_impacting",
+          "status",
+          "sequence",
+          "display_type",
+          "picklist_values",
+          "excluded_picklist_values"
+        ],
+        "title": "ProductAttributeItem"
+      },
+      "ProductDetail": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "product_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Code"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          },
+          "is_archived": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Archived"
+          },
+          "family": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type"
+          },
+          "configure_during_sale": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Configure During Sale"
+          },
+          "stock_keeping_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stock Keeping Unit"
+          },
+          "quantity_unit_of_measure": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity Unit Of Measure"
+          },
+          "specification_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Specification Type"
+          },
+          "decomposition_scope": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decomposition Scope"
+          },
+          "usage_model_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usage Model Type"
+          },
+          "is_assetizable": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Assetizable"
+          },
+          "is_sold_only_with_other_products": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Sold Only With Other Products"
+          },
+          "availability_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Availability Date"
+          },
+          "discontinued_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discontinued Date"
+          },
+          "end_of_life_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Of Life Date"
+          },
+          "help_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Help Text"
+          },
+          "display_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display Url"
+          },
+          "last_modified": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Modified"
+          },
+          "synced_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Synced At"
+          },
+          "salesforce_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Salesforce Url"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "memberships": {
+            "items": {
+              "$ref": "#/components/schemas/CategoryMembership"
+            },
+            "type": "array",
+            "title": "Memberships"
+          },
+          "attributes": {
+            "items": {
+              "$ref": "#/components/schemas/ProductAttributeItem"
+            },
+            "type": "array",
+            "title": "Attributes"
+          },
+          "bundle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BundleStructure"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "used_in_bundles": {
+            "items": {
+              "$ref": "#/components/schemas/RecordRef"
+            },
+            "type": "array",
+            "title": "Used In Bundles"
+          },
+          "selling_models": {
+            "items": {
+              "$ref": "#/components/schemas/SellingModelItem"
+            },
+            "type": "array",
+            "title": "Selling Models"
+          },
+          "price_entries": {
+            "items": {
+              "$ref": "#/components/schemas/PriceEntryItem"
+            },
+            "type": "array",
+            "title": "Price Entries"
+          },
+          "sections": {
+            "items": {
+              "$ref": "#/components/schemas/SectionAvailability"
+            },
+            "type": "array",
+            "title": "Sections"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "name",
+          "product_code",
+          "description",
+          "is_active",
+          "is_archived",
+          "family",
+          "type",
+          "configure_during_sale",
+          "stock_keeping_unit",
+          "quantity_unit_of_measure",
+          "specification_type",
+          "decomposition_scope",
+          "usage_model_type",
+          "is_assetizable",
+          "is_sold_only_with_other_products",
+          "availability_date",
+          "discontinued_date",
+          "end_of_life_date",
+          "help_text",
+          "display_url",
+          "last_modified",
+          "synced_at",
+          "salesforce_url",
+          "classification",
+          "memberships",
+          "attributes",
+          "bundle",
+          "used_in_bundles",
+          "selling_models",
+          "price_entries",
+          "sections"
+        ],
+        "title": "ProductDetail"
+      },
+      "ProductListItem": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "product_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Code"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type"
+          },
+          "family": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Family"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "category_names": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Category Names"
+          },
+          "last_modified": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Modified"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "name",
+          "product_code",
+          "type",
+          "family",
+          "is_active",
+          "description",
+          "classification",
+          "category_names",
+          "last_modified"
+        ],
+        "title": "ProductListItem"
+      },
+      "ProductLookupItem": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "product_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Product Code"
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Type"
+          },
+          "is_active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Active"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "catalog_names": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Catalog Names"
+          },
+          "category_names": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Category Names"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "name",
+          "product_code",
+          "type",
+          "is_active",
+          "description",
+          "catalog_names",
+          "category_names"
+        ],
+        "title": "ProductLookupItem"
+      },
+      "ProductLookupResponse": {
+        "properties": {
+          "query": {
+            "type": "string",
+            "title": "Query"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProductLookupItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total_matches": {
+            "type": "integer",
+            "title": "Total Matches"
+          },
+          "last_synced_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Synced At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "query",
+          "items",
+          "total_matches",
+          "last_synced_at"
+        ],
+        "title": "ProductLookupResponse"
+      },
+      "ProductPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ProductListItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          },
+          "total_pages": {
+            "type": "integer",
+            "title": "Total Pages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "page_size",
+          "total_pages"
+        ],
+        "title": "ProductPage"
+      },
       "PublicAgentResponse": {
         "properties": {
           "id": {
@@ -1376,6 +4839,334 @@
           "description"
         ],
         "title": "PublicAgentResponse"
+      },
+      "RecordRef": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id"
+        ],
+        "title": "RecordRef"
+      },
+      "SectionAvailability": {
+        "properties": {
+          "section": {
+            "type": "string",
+            "title": "Section"
+          },
+          "available": {
+            "type": "boolean",
+            "title": "Available"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "synced",
+              "empty",
+              "not_mapped",
+              "not_available",
+              "blocked",
+              "error",
+              "never_synced"
+            ],
+            "title": "Status"
+          },
+          "blocked_objects": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Blocked Objects"
+          },
+          "detail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "section",
+          "available",
+          "status",
+          "blocked_objects",
+          "detail"
+        ],
+        "title": "SectionAvailability"
+      },
+      "SellingModelItem": {
+        "properties": {
+          "sf_id": {
+            "type": "string",
+            "title": "Sf Id"
+          },
+          "selling_model": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "selling_model_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Selling Model Type"
+          },
+          "pricing_term": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pricing Term"
+          },
+          "pricing_term_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pricing Term Unit"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "is_default": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Default"
+          }
+        },
+        "type": "object",
+        "required": [
+          "sf_id",
+          "selling_model",
+          "selling_model_type",
+          "pricing_term",
+          "pricing_term_unit",
+          "status",
+          "is_default"
+        ],
+        "title": "SellingModelItem"
+      },
+      "SyncJobView": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "running",
+              "success",
+              "failed"
+            ],
+            "title": "Status"
+          },
+          "records_synced": {
+            "type": "integer",
+            "title": "Records Synced"
+          },
+          "finished": {
+            "type": "boolean",
+            "title": "Finished"
+          },
+          "failure_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Failure Reason"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "records_synced",
+          "finished"
+        ],
+        "title": "SyncJobView"
+      },
+      "UserCreate": {
+        "properties": {
+          "email": {
+            "type": "string",
+            "maxLength": 320,
+            "minLength": 3,
+            "title": "Email"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 200,
+            "title": "Name",
+            "default": ""
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "viewer"
+            ],
+            "title": "Role",
+            "default": "viewer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "email"
+        ],
+        "title": "UserCreate"
+      },
+      "UserResponse": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "email",
+          "name",
+          "role",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "UserResponse"
+      },
+      "UserUpdate": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "viewer"
+            ],
+            "title": "Role"
+          }
+        },
+        "type": "object",
+        "required": [
+          "role"
+        ],
+        "title": "UserUpdate"
       },
       "ValidationError": {
         "properties": {
@@ -1425,11 +5216,5 @@
         "name": "X-Atlas-User-Session"
       }
     }
-  },
-  "servers": [
-    {
-      "url": "/api",
-      "description": "API server (proxied through Vite)"
-    }
-  ]
+  }
 }

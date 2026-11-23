@@ -1,4 +1,24 @@
 pages:
   - name: Notes
     path: /
-    requirements: [R1, R2, R3, R4]
+    requirements: [R1, R4]
+  - name: Product catalog
+    path: /catalog
+    requirements: [R6]
+  - name: Product catalog category
+    path: /catalog?catalog=0ZSaj000000iSyIGAU&category=0ZGaj000001RJkNGAW
+    requirements: [R6]
+  - name: Bundle product detail
+    path: /catalog/products/:productId
+    params:
+      productId: 01taj00000YtW0VAAV
+    requirements: [R7, R9]
+  - name: Attributes
+    path: /catalog/attributes
+    requirements: [R8]
+  - name: Coverage and sync
+    path: /catalog/coverage
+    requirements: [R5]
+  - name: Users
+    path: /users
+    requirements: [R10]

@@ -1,0 +1,148 @@
+test_suites:
+- name: user_management
+  ordered: true
+  tests:
+  - name: Owner is admin
+    endpoint: /api/users/me
+    method: GET
+    requirements: [R10]
+    expect_status: 200
+    capture:
+      me_role: $.role
+      me_is_admin: $.is_admin
+      me_email: $.email
+  - name: Unknown signed-in user defaults to viewer
+    endpoint: /api/users/me
+    method: GET
+    requirements: [R10]
+    headers:
+      Atlas-User-Email: someone-new@example.com
+    expect_status: 200
+    capture:
+      default_role: $.role
+  - name: Admin adds a viewer
+    endpoint: /api/users/
+    method: POST
+    requirements: [R10]
+    expect_status: 201
+    body:
+      email: '  Viewer@Example.com '
+      name: Test Viewer
+      role: viewer
+    capture:
+      viewer_id: $.id
+      viewer_email: $.email
+      viewer_role: $.role
+  - name: Duplicate email rejected
+    endpoint: /api/users/
+    method: POST
+    requirements: [R10]
+    expect_status: 409
+    body:
+      email: viewer@example.com
+      role: viewer
+  - name: Invalid role rejected
+    endpoint: /api/users/
+    method: POST
+    requirements: [R10]
+    expect_status: 422
+    body:
+      email: other@example.com
+      role: superuser
+  - name: Admin lists users
+    endpoint: /api/users/
+    method: GET
+    requirements: [R10]
+    expect_status: 200
+    capture:
+      first_user_email: $[0].email
+      first_user_id: $[0].id
+  - name: Viewer cannot list users
+    endpoint: /api/users/
+    method: GET
+    requirements: [R10]
+    headers:
+      Atlas-User-Email: viewer@example.com
+    expect_status: 403
+  - name: Viewer cannot add users
+    endpoint: /api/users/
+    method: POST
+    requirements: [R10]
+    headers:
+      Atlas-User-Email: viewer@example.com
+    expect_status: 403
+    body:
+      email: blocked@example.com
+      role: admin
+  - name: Viewer cannot open the catalog
+    endpoint: /api/catalog/overview
+    method: GET
+    requirements: [R10]
+    headers:
+      Atlas-User-Email: viewer@example.com
+    expect_status: 403
+  - name: Viewer can still use notes
+    endpoint: /api/notes/
+    method: GET
+    requirements: [R10]
+    headers:
+      Atlas-User-Email: viewer@example.com
+    expect_status: 200
+  - name: Promote viewer to admin
+    endpoint: /api/users/${viewer_id}
+    method: PUT
+    requirements: [R10]
+    expect_status: 200
+    body:
+      role: admin
+    capture:
+      promoted_role: $.role
+  - name: Promoted admin can open the catalog
+    endpoint: /api/catalog/sync-status
+    method: GET
+    requirements: [R10]
+    headers:
+      Atlas-User-Email: viewer@example.com
+    expect_status: 200
+  - name: Demote back to viewer
+    endpoint: /api/users/${viewer_id}
+    method: PUT
+    requirements: [R10]
+    expect_status: 200
+    body:
+      role: viewer
+  - name: Delete viewer
+    endpoint: /api/users/${viewer_id}
+    method: DELETE
+    requirements: [R10]
+    expect_status: 204
+  - name: Deleted user is gone
+    endpoint: /api/users/${viewer_id}
+    method: PUT
+    requirements: [R10]
+    expect_status: 404
+    body:
+      role: viewer
+- name: last_admin_guard
+  ordered: true
+  tests:
+  - name: List users to find the only admin
+    endpoint: /api/users/
+    method: GET
+    requirements: [R10]
+    expect_status: 200
+    capture:
+      only_admin_id: $[0].id
+      only_admin_role: $[0].role
+  - name: Cannot demote the last admin
+    endpoint: /api/users/${only_admin_id}
+    method: PUT
+    requirements: [R10]
+    expect_status: 409
+    body:
+      role: viewer
+  - name: Cannot delete the last admin
+    endpoint: /api/users/${only_admin_id}
+    method: DELETE
+    requirements: [R10]
+    expect_status: 409
