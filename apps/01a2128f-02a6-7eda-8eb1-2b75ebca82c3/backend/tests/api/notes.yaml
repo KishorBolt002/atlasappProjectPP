@@ -1,0 +1,66 @@
+test_suites:
+  - name: notes
+    ordered: true
+    tests:
+      - name: Health check
+        endpoint: /api/health
+        method: GET
+        expect_status: 200
+      - name: List notes starts empty
+        endpoint: /api/notes/
+        method: GET
+        expect_status: 200
+        requirements: [R5]
+      - name: Create first note (text is trimmed)
+        endpoint: /api/notes/
+        method: POST
+        body:
+          text: "  First production DB test note  "
+        expect_status: 201
+        requirements: [R5]
+        capture:
+          first_note_id: $.id
+      - name: Create second note
+        endpoint: /api/notes/
+        method: POST
+        body:
+          text: Second note
+        expect_status: 201
+        requirements: [R5]
+        capture:
+          second_note_id: $.id
+      - name: List notes newest first
+        endpoint: /api/notes/
+        method: GET
+        expect_status: 200
+        requirements: [R5]
+        capture:
+          newest_note_id: $[0].id
+          oldest_note_id: $[1].id
+      - name: Blank note is rejected
+        endpoint: /api/notes/
+        method: POST
+        body:
+          text: "    "
+        expect_status: 422
+        requirements: [R5]
+      - name: Missing text is rejected
+        endpoint: /api/notes/
+        method: POST
+        body: {}
+        expect_status: 422
+        requirements: [R5]
+      - name: Note over 500 characters is rejected
+        endpoint: /api/notes/
+        method: POST
+        body:
+          text: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        expect_status: 422
+        requirements: [R5]
+      - name: Note of exactly 500 characters is accepted
+        endpoint: /api/notes/
+        method: POST
+        body:
+          text: "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
+        expect_status: 201
+        requirements: [R5]

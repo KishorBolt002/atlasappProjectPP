@@ -1,0 +1,134 @@
+# Verified 2026-11-25 with `sf sobject describe --sobject Asset` and a read-only
+# `sf data query` of the app's SOQL (10 rows returned). The app never writes to Salesforce.
+#
+# SOQL (src/routers/assets.py, ASSET_SOQL):
+#   SELECT Id, Name, Account.Name, ProductCode, ProductFamily, TotalLifecycleAmount,
+#          CurrentMrr, LifecycleStartDate, LifecycleEndDate, RenewalTerm, RenewalTermUnit,
+#          Owner.Name, CreatedDate
+#   FROM Asset ORDER BY CreatedDate DESC, Id DESC LIMIT 10
+#
+# Observed data notes:
+# - LifecycleStartDate / LifecycleEndDate are datetime in this org (e.g. 2027-01-06T23:59:59.000+0000);
+#   the app stores the UTC calendar date (YYYY-MM-DD).
+# - Currency fields report scale 2 but return more precision (e.g. 108.3225); stored unrounded as Numeric.
+# - RenewalTerm is a double; the app accepts only null or whole numbers and fails the sync otherwise.
+objects:
+  Asset:
+    label: Asset
+    fields:
+      - api_name: Id
+        label: Asset ID
+        type: id
+        usage:
+          why: Stable upsert key for the local cache (sf_id) and the asset detail route.
+          where_in_app:
+            - Asset sync (cache key)
+            - GET /api/assets/{asset_id}
+      - api_name: Name
+        label: Asset Name
+        type: string
+        usage:
+          why: Asset name shown in the list and detail panel.
+          where_in_app:
+            - Asset table
+            - Asset detail panel
+      - api_name: AccountId
+        label: Account ID
+        type: reference
+        usage:
+          why: Account.Name is read through this relationship (relationshipName Account).
+          where_in_app:
+            - Asset table (Account column)
+            - Asset detail panel
+      - api_name: ProductCode
+        label: Product Code
+        type: string
+        usage:
+          why: Product code shown per asset.
+          where_in_app:
+            - Asset table
+            - Asset detail panel
+      - api_name: ProductFamily
+        label: Product Family
+        type: picklist
+        picklist_values:
+          - api_value: None
+            ui_label: None
+        usage:
+          why: Family label per asset; records also carry values outside the describe list (Hardware, Software, Service) and null, shown as Unclassified.
+          where_in_app:
+            - Asset table
+            - Asset detail panel
+      - api_name: TotalLifecycleAmount
+        label: Total Lifecycle Amount
+        type: currency
+        usage:
+          why: Lifecycle value per asset and summed in the summary.
+          where_in_app:
+            - Asset table
+            - Asset detail panel
+            - Summary (total lifecycle value)
+      - api_name: CurrentMrr
+        label: Current Monthly Recurring Revenue
+        type: currency
+        usage:
+          why: MRR per asset and summed in the summary.
+          where_in_app:
+            - Asset table
+            - Asset detail panel
+            - Summary (total MRR)
+      - api_name: LifecycleStartDate
+        label: Lifecycle Start Date
+        type: datetime
+        usage:
+          why: Lifecycle start date (UTC calendar date) in the detail panel.
+          where_in_app:
+            - Asset detail panel
+      - api_name: LifecycleEndDate
+        label: Lifecycle End Date
+        type: datetime
+        usage:
+          why: Lifecycle end date (UTC calendar date) in the detail panel.
+          where_in_app:
+            - Asset detail panel
+      - api_name: RenewalTerm
+        label: Renewal Term
+        type: double
+        usage:
+          why: Renewal term length; must be null or a whole number (never rounded).
+          where_in_app:
+            - Asset detail panel
+      - api_name: RenewalTermUnit
+        label: Renewal Term Unit
+        type: picklist
+        picklist_values:
+          - api_value: Months
+            ui_label: Months
+          - api_value: Quarterly
+            ui_label: Quarterly
+          - api_value: Semi-Annual
+            ui_label: Semi-Annual
+          - api_value: Weekly
+            ui_label: Weekly
+          - api_value: Annual
+            ui_label: Years
+        usage:
+          why: Unit for the renewal term.
+          where_in_app:
+            - Asset detail panel
+      - api_name: OwnerId
+        label: Owner ID
+        type: reference
+        usage:
+          why: Owner.Name is read through this relationship (relationshipName Owner).
+          where_in_app:
+            - Asset table (Owner column)
+            - Asset detail panel
+      - api_name: CreatedDate
+        label: Created Date
+        type: datetime
+        usage:
+          why: Sort key (newest first) and created date in the detail panel.
+          where_in_app:
+            - Asset table ordering
+            - Asset detail panel

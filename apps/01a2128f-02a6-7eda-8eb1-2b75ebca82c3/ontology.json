@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "concepts": [
+    {
+      "id": "asset",
+      "name": "Asset",
+      "kind": "object",
+      "description": "A Salesforce Asset (a product held by a customer account). The app keeps a read-only local cache of the 10 most recently created Assets (CreatedDate desc, Id desc) and never writes to Salesforce. Money fields (Current MRR, Total Lifecycle Amount) are stored unrounded in the org currency; lifecycle start/end are Salesforce datetimes kept as their UTC calendar date; nulls stay null.",
+      "bindings": [
+        {
+          "kind": "external",
+          "target": "salesforce:Asset",
+          "role": "source",
+          "identity": "Salesforce Asset Id is stored as cached_assets.sf_id (unique) and exposed as AssetOut.id.",
+          "description": "Read through the Salesforce connector with one SOQL query over Asset (with Account.Name and Owner.Name) during the assets sync tick."
+        },
+        {
+          "kind": "table",
+          "target": "cached_assets",
+          "role": "cache",
+          "identity": "sf_id = Salesforce Asset Id.",
+          "description": "Local cache replaced as a whole on each successful sync."
+        },
+        {"kind": "schema", "target": "AssetOut", "role": "consumer", "description": "API shape of one cached asset."},
+        {"kind": "operation", "target": "list_assets_api_assets__get", "role": "consumer", "description": "Lists cached assets newest first, at most 10."},
+        {"kind": "operation", "target": "get_asset_api_assets__asset_id__get", "role": "consumer", "description": "Returns one cached asset by Salesforce Id for the detail panel; 404 when not cached."},
+        {"kind": "function", "target": "src/routers/assets.py:_to_row", "role": "derived", "description": "Maps and validates one Salesforce record before any cache write."}
+      ],
+      "uses": ["renewal-term-whole-number"]
+    },
+    {
+      "id": "renewal-term-whole-number",
+      "name": "Renewal term must be a whole number",
+      "kind": "rule",
+      "description": "Salesforce stores Asset.RenewalTerm as a double, but the app represents it as an integer or empty. A whole-number value (e.g. 12.0) is accepted as 12; any fractional or non-numeric value fails the whole sync with a reason naming the Asset Id and value, and the previous cache is kept. Values are never rounded.",
+      "bindings": [
+        {"kind": "function", "target": "src/routers/assets.py:_renewal_term", "role": "derived", "description": "Enforces the rule for each record during sync validation."}
+      ]
+    },
+    {
+      "id": "asset-summary",
+      "name": "Asset summary totals",
+      "kind": "calculation",
+      "description": "Count of cached assets, sum of Total Lifecycle Amount, and sum of Current MRR over exactly the cached (displayed) asset set; null amounts contribute 0. Includes the last successful sync time (finished_at of the latest successful assets sync), which changes in the same transaction as the cache.",
+      "bindings": [
+        {"kind": "operation", "target": "asset_summary_api_assets_summary_get", "role": "derived", "description": "Computes totals with SQL aggregation over cached_assets."},
+        {"kind": "schema", "target": "AssetSummary", "role": "consumer", "description": "Summary response shape."}
+      ],
+      "uses": ["asset", "asset-sync"]
+    },
+    {
+      "id": "asset-sync",
+      "name": "Sync assets from Salesforce",
+      "kind": "action",
+      "description": "User-triggered refresh of the asset cache from Salesforce (read-only). One tick fetches the latest 10 Assets, validates all of them, then deletes cached rows not in the new set and upserts the rest by Salesforce Id in one transaction together with the job's success status. Salesforce or authentication errors and validation failures end the job as failed with a readable reason and leave the cache unchanged.",
+      "bindings": [
+        {"kind": "operation", "target": "start_api_assets_sync_start_post", "role": "consumer", "description": "Starts (or returns the active) assets sync job."},
+        {"kind": "operation", "target": "tick_api_assets_sync__job_id__tick_post", "role": "consumer", "description": "Runs the sync work and reports status, record count, and failure reason."},
+        {"kind": "function", "target": "src/routers/assets.py:_assets_tick", "role": "derived", "description": "Fetch, validate, and replace the cache."}
+      ],
+      "uses": ["asset", "renewal-term-whole-number"]
+    },
+    {
+      "id": "test-note",
+      "name": "Test note",
+      "kind": "object",
+      "description": "Free-text note (trimmed, 1-500 characters) saved in the app's own database to test database writes; independent of Salesforce. Listed newest first.",
+      "bindings": [
+        {"kind": "table", "target": "test_notes", "role": "source", "description": "Stores the notes."},
+        {"kind": "schema", "target": "NoteOut", "role": "consumer", "description": "Note response shape."},
+        {"kind": "operation", "target": "list_notes_api_notes__get", "role": "consumer", "description": "Lists notes newest first."},
+        {"kind": "operation", "target": "create_note_api_notes__post", "role": "consumer", "description": "Saves a note; blank or over-500-character text is rejected with 422."}
+      ]
+    }
+  ],
+  "relationships": []
+}

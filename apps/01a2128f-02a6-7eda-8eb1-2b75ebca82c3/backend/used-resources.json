@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "connector_types": [
+    "salesforce"
+  ],
+  "custom_connector_ids": [],
+  "custom_connector_labels": [],
+  "mcp_handles": [],
+  "app_ids": [],
+  "agent_ids": [],
+  "uses_paired_agent": false
+}

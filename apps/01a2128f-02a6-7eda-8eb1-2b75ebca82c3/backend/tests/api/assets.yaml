@@ -1,0 +1,62 @@
+# Reads live Salesforce (read-only SOQL query) through the sync tick.
+test_suites:
+  - name: assets
+    ordered: true
+    tests:
+      - name: Summary before any sync has no last-synced time
+        endpoint: /api/assets/summary
+        method: GET
+        expect_status: 200
+        requirements: [R3, R4]
+      - name: Unknown asset id returns 404
+        endpoint: /api/assets/02i000000000000AAA
+        method: GET
+        expect_status: 404
+        requirements: [R2]
+      - name: Start asset sync
+        endpoint: /api/assets/sync/start
+        method: POST
+        expect_status: 202
+        requirements: [R4]
+        capture:
+          sync_job_id: $.id
+      - name: Start is idempotent while the job is pending
+        endpoint: /api/assets/sync/start
+        method: POST
+        expect_status: 202
+        requirements: [R4]
+      - name: Tick runs the sync against Salesforce and finishes
+        endpoint: /api/assets/sync/${sync_job_id}/tick
+        method: POST
+        expect_status: 200
+        timeout: 60
+        requirements: [R4]
+        capture:
+          sync_status: $.status
+          sync_finished_at: $.finished_at
+      - name: Tick on unknown job returns 404
+        endpoint: /api/assets/sync/00000000-0000-0000-0000-000000000000/tick
+        method: POST
+        expect_status: 404
+        requirements: [R4]
+      - name: List cached assets (newest first, at most 10)
+        endpoint: /api/assets/
+        method: GET
+        expect_status: 200
+        requirements: [R1]
+        capture:
+          first_asset_id: $[0].id
+          first_asset_name: $[0].name
+      - name: Summary after sync has totals and last-synced time
+        endpoint: /api/assets/summary
+        method: GET
+        expect_status: 200
+        requirements: [R3, R4]
+        capture:
+          summary_synced_at: $.synced_at
+          summary_count: $.asset_count
+      - name: Get one cached asset by id for the detail panel
+        endpoint: /api/assets/${first_asset_id}
+        method: GET
+        expect_status: 200
+        requirements: [R2]
