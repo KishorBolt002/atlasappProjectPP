@@ -1,0 +1,7 @@
+test_suites:
+  - name: health
+    tests:
+      - name: Health check
+        endpoint: /api/health
+        method: GET
+        expect_status: 200

@@ -1,0 +1,4 @@
+pages:
+  - name: Home
+    path: /
+    requirements: [R1]
