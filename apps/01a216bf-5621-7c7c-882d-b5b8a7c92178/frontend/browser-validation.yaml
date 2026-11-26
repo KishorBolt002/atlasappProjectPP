@@ -1,0 +1,4 @@
+pages:
+  - name: Greeting
+    path: /
+    requirements: [R1, R2]

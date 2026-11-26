@@ -1,0 +1,194 @@
+:host {
+  all: initial;
+}
+.shell {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  pointer-events: none;
+}
+.panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  pointer-events: auto;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-sizing: border-box;
+  height: 48px;
+  padding: 0 8px 0 16px;
+  border-bottom: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-fg);
+  user-select: none;
+  cursor: grab;
+}
+.header[data-dragging="true"] {
+  cursor: grabbing;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.header-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+.title {
+  margin: 0;
+  color: var(--accent-fg);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--accent-fg);
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+.icon-btn:focus-visible,
+.fab:focus-visible {
+  outline: 2px solid var(--accent-fg);
+  outline-offset: 2px;
+}
+.icon-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+.body {
+  flex: 1;
+  min-height: 0;
+  background: var(--frame-bg);
+}
+.body iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+}
+.fab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  user-select: none;
+  touch-action: none;
+  margin-left: auto;
+}
+.fab:hover {
+  transform: translateY(-2px) scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+.fab:active {
+  transform: scale(0.95);
+}
+.fab svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+.resize-top {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 0;
+  height: 6px;
+  transform: translateY(-50%);
+  cursor: ns-resize;
+  touch-action: none;
+  pointer-events: auto;
+}
+.resize-left {
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 6px;
+  transform: translateX(-50%);
+  cursor: ew-resize;
+  touch-action: none;
+  pointer-events: auto;
+}
+.resize-right {
+  position: absolute;
+  right: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 6px;
+  transform: translateX(50%);
+  cursor: ew-resize;
+  touch-action: none;
+  pointer-events: auto;
+}
+.resize-top-left {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 16px;
+  height: 16px;
+  transform: translate(-50%, -50%);
+  cursor: nwse-resize;
+  touch-action: none;
+  pointer-events: auto;
+}
+.resize-top-right {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 16px;
+  height: 16px;
+  transform: translate(50%, -50%);
+  cursor: nesw-resize;
+  touch-action: none;
+  pointer-events: auto;
+}
+.drag-overlay {
+  position: absolute;
+  inset: 0;
+}
+@media (max-width: 720px) {
+  .panel {
+    width: 100% !important;
+    height: min(78vh, calc(100vh - 96px)) !important;
+  }
+}

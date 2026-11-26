@@ -1,0 +1,1222 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Hello World",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/_atlas/agents": {
+      "get": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "List Agents",
+        "description": "List the app's agents without exposing credentials or upstream URLs.",
+        "operationId": "list_agents_api__atlas_agents_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PublicAgentResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Agents Api  Atlas Agents Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ]
+      }
+    },
+    "/api/_atlas/agents/paired": {
+      "get": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Get Paired Agent",
+        "description": "Return the agent built in this app's Build chat.",
+        "operationId": "get_paired_agent_api__atlas_agents_paired_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicAgentResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ]
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/threads": {
+      "get": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "List Threads",
+        "operationId": "list_threads_api__atlas_agents__agent_identifier__threads_get",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Create Thread",
+        "operationId": "create_thread_api__atlas_agents__agent_identifier__threads_post",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/threads/{thread_id}": {
+      "get": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Get Thread",
+        "operationId": "get_thread_api__atlas_agents__agent_identifier__threads__thread_id__get",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          },
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Rename Thread",
+        "operationId": "rename_thread_api__atlas_agents__agent_identifier__threads__thread_id__patch",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          },
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Delete Thread",
+        "operationId": "delete_thread_api__atlas_agents__agent_identifier__threads__thread_id__delete",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          },
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/threads/{thread_id}/pin": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Pin Thread",
+        "operationId": "pin_thread_api__atlas_agents__agent_identifier__threads__thread_id__pin_post",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          },
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Unpin Thread",
+        "operationId": "unpin_thread_api__atlas_agents__agent_identifier__threads__thread_id__pin_delete",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          },
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/threads/{thread_id}/uploads": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Upload File",
+        "operationId": "upload_file_api__atlas_agents__agent_identifier__threads__thread_id__uploads_post",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          },
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/threads/{thread_id}/files": {
+      "get": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "List Thread Files",
+        "operationId": "list_thread_files_api__atlas_agents__agent_identifier__threads__thread_id__files_get",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          },
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/threads/{thread_id}/files/{file_id}/content": {
+      "get": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Download Thread File",
+        "operationId": "download_thread_file_api__atlas_agents__agent_identifier__threads__thread_id__files__file_id__content_get",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          },
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Thread Id"
+            }
+          },
+          {
+            "name": "file_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "File Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/chat": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Send Message",
+        "operationId": "send_message_api__atlas_agents__agent_identifier__chat_post",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/chat/stream": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Stream Message",
+        "operationId": "stream_message_api__atlas_agents__agent_identifier__chat_stream_post",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/chat/resume": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Resume Message",
+        "operationId": "resume_message_api__atlas_agents__agent_identifier__chat_resume_post",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/chat/attach": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Attach Message",
+        "operationId": "attach_message_api__atlas_agents__agent_identifier__chat_attach_post",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/chat/stop": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Stop Message",
+        "operationId": "stop_message_api__atlas_agents__agent_identifier__chat_stop_post",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/calls/{call_id}": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Get Call",
+        "operationId": "get_call_api__atlas_agents__agent_identifier__calls__call_id__post",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          },
+          {
+            "name": "call_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Call Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/calls/{call_id}/events": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Subscribe Call",
+        "operationId": "subscribe_call_api__atlas_agents__agent_identifier__calls__call_id__events_post",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          },
+          {
+            "name": "call_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Call Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/calls/{call_id}/recording": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Call Recording",
+        "operationId": "call_recording_api__atlas_agents__agent_identifier__calls__call_id__recording_post",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          },
+          {
+            "name": "call_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Call Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/_atlas/agents/{agent_identifier}/calls/{call_id}/delete": {
+      "post": {
+        "tags": [
+          "agents"
+        ],
+        "summary": "Delete Call",
+        "operationId": "delete_call_api__atlas_agents__agent_identifier__calls__call_id__delete_post",
+        "security": [
+          {
+            "AtlasUserSession": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "agent_identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Agent Identifier"
+            }
+          },
+          {
+            "name": "call_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Call Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/greeting": {
+      "get": {
+        "tags": [
+          "greeting"
+        ],
+        "summary": "Get greeting",
+        "operationId": "get_greeting_api_greeting_get",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "World",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Greeting"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "tags": [
+          "greeting"
+        ],
+        "summary": "Health",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Greeting": {
+        "properties": {
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "subtitle": {
+            "type": "string",
+            "title": "Subtitle"
+          }
+        },
+        "type": "object",
+        "required": [
+          "message",
+          "subtitle"
+        ],
+        "title": "Greeting"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthStatus": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "HealthStatus"
+      },
+      "PublicAgentResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "slug": {
+            "type": "string",
+            "title": "Slug"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "slug",
+          "name",
+          "description"
+        ],
+        "title": "PublicAgentResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "AtlasUserSession": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Atlas-User-Session"
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+# Greeting API: stateless hello-world greeting with an optional, trimmed name.
+# Each capture asserts that the field is present in the response body; the
+# exact message values are listed in the test names.
+test_suites:
+  - name: greeting_api
+    tests:
+      - name: Health check returns ok
+        endpoint: /api/health
+        method: GET
+        expect_status: 200
+        capture:
+          health_status: $.status
+
+      - name: Default greeting without name is Hello, World! with subtitle
+        endpoint: /api/greeting
+        method: GET
+        expect_status: 200
+        requirements: [R2]
+        capture:
+          default_message: $.message
+          default_subtitle: $.subtitle
+
+      - name: Named greeting for Ada is Hello, Ada!
+        endpoint: /api/greeting
+        method: GET
+        expect_status: 200
+        requirements: [R2]
+        params:
+          query:
+            name: Ada
+        capture:
+          ada_message: $.message
+          ada_subtitle: $.subtitle
+
+      - name: Surrounding spaces are trimmed to Hello, Ada!
+        endpoint: /api/greeting
+        method: GET
+        expect_status: 200
+        requirements: [R2]
+        params:
+          query:
+            name: "   Ada  "
+        capture:
+          trimmed_message: $.message
+
+      - name: Empty name falls back to Hello, World!
+        endpoint: /api/greeting
+        method: GET
+        expect_status: 200
+        requirements: [R1, R2]
+        params:
+          query:
+            name: ""
+        capture:
+          empty_message: $.message
+
+      - name: Whitespace-only name falls back to Hello, World!
+        endpoint: /api/greeting
+        method: GET
+        expect_status: 200
+        requirements: [R1, R2]
+        params:
+          query:
+            name: "    "
+        capture:
+          blank_message: $.message

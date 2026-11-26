@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "concepts": [
+    {
+      "id": "greeting",
+      "name": "Greeting",
+      "kind": "calculation",
+      "description": "A personalized hello message built from an optional visitor-supplied name. The name is trimmed of surrounding whitespace; an empty or whitespace-only name falls back to World. The message reads Hello, <name>! and is returned with a fixed subtitle. Computed per request; nothing is stored.",
+      "bindings": [
+        {
+          "kind": "operation",
+          "target": "get_greeting_api_greeting_get",
+          "role": "derived",
+          "description": "Read-only endpoint that computes the greeting for the optional name query parameter."
+        },
+        {
+          "kind": "schema",
+          "target": "Greeting",
+          "description": "Response shape carrying the message and subtitle."
+        },
+        {
+          "kind": "function",
+          "target": "src/routers/greeting.py:get_greeting",
+          "role": "derived",
+          "description": "Applies the trim and World fallback rule and formats the message."
+        }
+      ]
+    }
+  ]
+}
